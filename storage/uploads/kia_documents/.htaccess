@@ -1,0 +1,4 @@
+# Proteksi Akses Langsung Berkas Medis Buku KIA
+# Hanya boleh dibaca melalui skrip PHP admin terotentikasi
+Order Deny,Allow
+Deny from all

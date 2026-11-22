@@ -1,0 +1,28 @@
+# Environment & Credentials
+.env
+.env.local
+credentials.json
+token.json
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Logs & Temp
+*.log
+.tmp/
+
+# Uploads directory (keep structure, ignore actual user-uploaded files)
+storage/uploads/drop_proofs/*
+!storage/uploads/drop_proofs/.gitkeep
+
+storage/uploads/kia_documents/*
+!storage/uploads/kia_documents/.htaccess
+!storage/uploads/kia_documents/sample_*.jpg
