@@ -94,37 +94,56 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     height: 72px;
+    gap: 16px;
 }
 .brand {
-    font-size: 1.45rem;
+    font-size: 1.4rem;
     font-weight: 800;
     color: #0f172a;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     letter-spacing: -0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
-.brand span {
-    font-size: 0.82rem;
+.brand:hover {
+    text-decoration: none;
+    color: #0f172a;
+}
+.brand .brand-tag {
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--primary-dark);
     background: var(--primary-light);
     padding: 3px 10px;
     border-radius: var(--radius-pill);
+    border: 1px solid rgba(2, 132, 199, 0.2);
+    white-space: nowrap;
 }
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+.nav-links li {
+    display: inline-flex;
+    align-items: center;
 }
 .nav-links a {
     color: #0f172a;
     font-weight: 600;
-    font-size: 0.92rem;
-    padding: 8px 16px;
+    font-size: 0.88rem;
+    padding: 8px 12px;
     border-radius: var(--radius-pill);
     transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
 }
 .nav-links a:hover {
     background-color: var(--primary-light);
@@ -146,6 +165,8 @@ a:hover {
     border: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .btn:active {
     transform: scale(0.97);
@@ -194,6 +215,8 @@ a:hover {
 .btn-sm {
     padding: 6px 14px;
     font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* Badges (Pills) */
@@ -385,4 +408,30 @@ footer {
 @keyframes proofFadeIn {
     from { opacity: 0; transform: scale(0.96); }
     to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsivitas Navbar & Layar Kecil */
+@media (max-width: 992px) {
+    .brand .brand-tag {
+        display: none;
+    }
+    .nav-links a {
+        padding: 6px 10px;
+        font-size: 0.84rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        height: auto;
+        min-height: 64px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .nav-links {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
 }
