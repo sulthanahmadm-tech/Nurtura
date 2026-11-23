@@ -1,29 +1,31 @@
-/* Nurtura 3-Color Design System
- * 1. Background Utama: Cyan #0284c7
- * 2. Tombol CTA: Hijau #C7F22B
- * 3. Flashcard / Fitur / Informasi / Banner: Putih Polos #FFFFFF
+/* Nurtura Option 1: Modern Clean Medical Cyan Design System
+ * 1. Background Kanvas: Ice Cyan Pastel (#f0f9ff)
+ * 2. Tombol CTA Utama: Hijau Lime (#C7F22B) dengan teks gelap (#0f172a)
+ * 3. Flashcard / Fitur / Banner: Putih Polos (#FFFFFF)
+ * 4. Aksen Judul, Link, & Ikon: Medical Cyan (#0284c7)
  */
 :root {
-    /* 1. Warna Utama: Cyan #0284c7 */
+    /* 1. Latar Belakang Kanvas (Ice Cyan Pastel) */
+    --bg-page: #f0f9ff;
+
+    /* Aksen Utama Sistem: Medical Cyan */
     --primary: #0284c7;
     --primary-dark: #0369a1;
     --primary-light: #e0f2fe;
-    --bg-page: #0284c7;
 
-    /* 2. Warna Kedua: Hijau Neon CTA #C7F22B */
+    /* 2. Tombol CTA: Hijau Lime #C7F22B */
     --accent-cta: #C7F22B;
     --accent-cta-hover: #b3df15;
     --accent-cta-text: #0f172a;
-    --accent-coral: #C7F22B; /* Unified to CTA green */
+    --accent-coral: #C7F22B;
 
-    /* 3. Warna Ketiga: Putih Polos #FFFFFF */
+    /* 3. Flashcard / Fitur / Informasi / Banner: Putih Polos #FFFFFF */
     --bg-card: #ffffff;
     --border-color: #e2e8f0;
 
     /* Typography */
     --text-main: #0f172a;
     --text-muted: #64748b;
-    --text-on-cyan: #ffffff;
     --secondary: #0f172a;
     --secondary-light: #f1f5f9;
 
@@ -38,9 +40,9 @@
     --radius-sm: 12px;
     --radius-pill: 9999px;
 
-    --shadow-sm: 0 2px 4px rgba(2, 44, 69, 0.08);
-    --shadow: 0 12px 28px -6px rgba(2, 44, 69, 0.18), 0 6px 12px -4px rgba(2, 44, 69, 0.1);
-    --shadow-lg: 0 24px 40px -10px rgba(2, 44, 69, 0.28), 0 12px 20px -6px rgba(2, 44, 69, 0.15);
+    --shadow-sm: 0 1px 3px rgba(2, 132, 199, 0.04);
+    --shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.08), 0 8px 10px -6px rgba(2, 132, 199, 0.04);
+    --shadow-lg: 0 20px 35px -8px rgba(2, 132, 199, 0.12), 0 10px 15px -4px rgba(2, 132, 199, 0.06);
 }
 
 * {
@@ -58,14 +60,6 @@ body {
     flex-direction: column;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
-}
-
-/* Headers on Cyan Canvas */
-h1.on-cyan, h2.on-cyan, h3.on-cyan, .text-white {
-    color: #ffffff !important;
-}
-p.on-cyan-sub {
-    color: #e0f2fe !important;
 }
 
 a {
@@ -86,14 +80,14 @@ a:hover {
     width: 100%;
 }
 
-/* Header & Navbar (Pure White #FFFFFF) */
+/* Header & Navbar (Putih Bersih #FFFFFF dengan Aksen Cyan) */
 .navbar {
     background: #ffffff;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 4px 20px rgba(2, 44, 69, 0.15);
+    box-shadow: 0 2px 12px rgba(2, 132, 199, 0.06);
 }
 .nav-container {
     display: flex;
@@ -138,7 +132,7 @@ a:hover {
     text-decoration: none;
 }
 
-/* 2. Tombol-tombol CTA (Warna Hijau #C7F22B) */
+/* 2. Tombol-tombol CTA (Warna Hijau Lime #C7F22B) */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -157,15 +151,15 @@ a:hover {
     transform: scale(0.97);
 }
 
-/* Tombol CTA Utama (Hijau #C7F22B dengan teks gelap kontras) */
+/* Tombol CTA Utama (Hijau Lime #C7F22B) */
 .btn-primary, .btn-coral {
     background-color: var(--accent-cta);
     color: var(--accent-cta-text) !important;
-    box-shadow: 0 4px 14px rgba(199, 242, 43, 0.35);
+    box-shadow: 0 4px 14px rgba(199, 242, 43, 0.4);
 }
 .btn-primary:hover, .btn-coral:hover {
     background-color: var(--accent-cta-hover);
-    box-shadow: 0 6px 20px rgba(199, 242, 43, 0.55);
+    box-shadow: 0 6px 20px rgba(199, 242, 43, 0.6);
     text-decoration: none;
     transform: translateY(-1px);
 }
@@ -177,7 +171,7 @@ a:hover {
 }
 .btn-dark:hover {
     background-color: #1e293b;
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
     text-decoration: none;
 }
 .btn-secondary {
@@ -215,7 +209,7 @@ a:hover {
 .badge-cta, .badge-coral {
     background: var(--accent-cta);
     color: var(--accent-cta-text);
-    border: 1px solid rgba(199, 242, 43, 0.4);
+    border: 1px solid rgba(199, 242, 43, 0.5);
 }
 .badge-info { background: var(--primary-light); color: var(--primary-dark); }
 .badge-success { background: #dcfce7; color: #15803d; }
@@ -227,7 +221,7 @@ a:hover {
 /* 3. Flashcard / Fitur / Informasi / Banner: Putih Polos #FFFFFF */
 .card {
     background: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius);
     padding: 30px;
     margin-bottom: 24px;
@@ -272,18 +266,18 @@ a:hover {
 .form-control:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
 }
 
-/* Banner / Hero Card (Putih Polos #FFFFFF di atas Background Cyan) */
+/* Banner / Hero Card (Putih Polos #FFFFFF) */
 .hero {
     background: #ffffff;
-    border: 1px solid #ffffff;
+    border: 1px solid var(--border-color);
     border-radius: var(--radius);
     padding: 56px 32px;
     text-align: center;
     margin-bottom: 28px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow);
 }
 .hero h1 {
     font-size: 2.6rem;
@@ -328,12 +322,11 @@ a:hover {
 footer {
     margin-top: auto;
     background: #ffffff;
-    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid var(--border-color);
     padding: 28px 0;
     text-align: center;
     color: var(--text-muted);
     font-size: 0.88rem;
-    box-shadow: 0 -4px 20px rgba(2, 44, 69, 0.08);
 }
 
 /* Modal Bukti Bantuan */
@@ -342,7 +335,7 @@ footer {
     position: fixed;
     z-index: 9999;
     inset: 0;
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(4px);
     justify-content: center;
     align-items: center;
