@@ -9,6 +9,7 @@ require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 require_once __DIR__ . '/../helpers/format_helper.php';
 require_once __DIR__ . '/../../config/app.php';
+require_once __DIR__ . '/../models/Donation.php';
 
 class NeedController {
     public static function explore() {
@@ -107,4 +108,73 @@ class NeedController {
 
         require_once __DIR__ . '/../../views/ibu_hamil/create_need.php';
     }
+
+
+    public static function view_proof() {
+        require_auth(['ibu_hamil']);
+
+        $need_id = (int)($_GET['need_id'] ?? 0);
+        $mother_id = current_user()['id'];
+
+        if ($need_id <= 0) {
+            http_response_code(400);
+            exit('ID kebutuhan tidak valid.');
+        }
+
+        // Ambil bukti yang memang milik ibu hamil ini
+        $proof = Donation::get_proof_for_mother($need_id, $mother_id);
+
+        if (!$proof || empty($proof['proof_of_drop_path'])) {
+            http_response_code(404);
+            exit('Bukti bantuan tidak ditemukan.');
+        }
+
+        // Pastikan hanya nama file, bukan alamat/path lain
+        $filename = $proof['proof_of_drop_path'];
+
+        if ($filename !== basename($filename)) {
+            http_response_code(403);
+            exit('Akses file ditolak.');
+        }
+
+        $file_path = PROOF_UPLOAD_DIR . DIRECTORY_SEPARATOR . $filename;
+        $real_file = realpath($file_path);
+        $real_dir = realpath(PROOF_UPLOAD_DIR);
+
+        if (
+            !$real_file ||
+            !$real_dir ||
+            !is_file($real_file) ||
+            strpos($real_file, $real_dir . DIRECTORY_SEPARATOR) !== 0
+        ) {
+            http_response_code(404);
+            exit('File bukti tidak ditemukan.');
+        }
+
+        // Pastikan file benar-benar gambar
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $real_file);
+        finfo_close($finfo);
+
+        $allowed_mimes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp'
+        ];
+
+        if (!in_array($mime, $allowed_mimes, true)) {
+            http_response_code(415);
+            exit('Format file tidak didukung.');
+        }
+
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($real_file));
+        header('Content-Disposition: inline; filename="bukti-bantuan"');
+        header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: private, no-store');
+
+        readfile($real_file);
+        exit;
+    }
+
 }

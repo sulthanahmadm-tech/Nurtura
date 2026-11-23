@@ -59,4 +59,61 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
 });
+function openProofModal(needId) {
+        const modal = document.getElementById(
+            'proof-modal-' + needId
+        );
+
+        const image = document.getElementById(
+            'proof-image-' + needId
+        );
+
+        const loading = document.getElementById(
+            'proof-loading-' + needId
+        );
+
+        if (!modal || !image || !loading) return;
+
+        modal.style.display = 'flex';
+        image.style.display = 'none';
+        loading.textContent = 'Memuat foto bukti bantuan...';
+        loading.style.display = 'block';
+
+        image.onload = function () {
+            image.style.display = 'block';
+            loading.style.display = 'none';
+        };
+
+        image.onerror = function () {
+            image.style.display = 'none';
+            loading.textContent =
+                'Foto bukti tidak ditemukan atau gagal dimuat.';
+            loading.style.display = 'block';
+        };
+
+        image.src =
+            'index.php?action=view-proof&need_id=' +
+            encodeURIComponent(needId);
+    }
+
+    function closeProofModal(needId) {
+        const modal = document.getElementById(
+            'proof-modal-' + needId
+        );
+
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('.proof-modal').forEach(
+                function (modal) {
+                    modal.style.display = 'none';
+                }
+            );
+        }
+    });

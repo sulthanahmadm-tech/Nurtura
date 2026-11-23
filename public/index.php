@@ -46,9 +46,16 @@ if ($action !== null) {
         case 'view-kia':
             AdminController::view_kia();
             break;
+        case 'view-proof':
+            NeedController::view_proof();
+            break;
+        case 'admin-update-dispute':
+            AdminController::update_dispute();
+            break;
         default:
             http_response_code(404);
             die("Aksi tidak ditemukan.");
+        
     }
     exit;
 }

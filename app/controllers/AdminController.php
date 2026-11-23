@@ -9,11 +9,16 @@ require_once __DIR__ . '/../helpers/format_helper.php';
 require_once __DIR__ . '/../../config/app.php';
 
 class AdminController {
+    
     public static function dashboard() {
         require_auth(['admin']);
+
         $pending_needs = Need::get_pending_review_admin();
+        $disputes = Need::get_disputes_admin();
+
         require_once __DIR__ . '/../../views/admin/dashboard.php';
     }
+
 
     public static function update_status() {
         require_auth(['admin']);
@@ -37,6 +42,40 @@ class AdminController {
             exit;
         }
     }
+
+    public static function update_dispute() {
+        require_auth(['admin']);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            exit('Metode tidak diizinkan.');
+        }
+
+        if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+            die("CSRF Token tidak valid!");
+        }
+
+        $dispute_id = (int)($_POST['dispute_id'] ?? 0);
+        $status = $_POST['status'] ?? '';
+        $notes = trim($_POST['admin_notes'] ?? '');
+
+        $allowed_statuses = [
+            'under_review',
+            'resolved',
+            'rejected'
+        ];
+
+        if ($dispute_id <= 0 || !in_array($status, $allowed_statuses, true)) {
+            header("Location: index.php?page=admin-dashboard&error=dispute_invalid");
+            exit;
+        }
+
+        Need::update_dispute_status($dispute_id, $status, $notes);
+
+        header("Location: index.php?page=admin-dashboard&msg=dispute_diperbarui");
+        exit;
+    }
+
 
     // Endpoint aman untuk membaca dokumen KIA yang diisolasi di folder privat
     public static function view_kia() {

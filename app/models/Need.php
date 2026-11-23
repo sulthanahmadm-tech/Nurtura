@@ -78,17 +78,113 @@ class Need {
         return $stmt->fetchAll();
     }
 
+    
     public static function update_status_admin($id, $status, $admin_notes = null) {
         $pdo = get_db_connection();
+
         $stmt = $pdo->prepare("
-            UPDATE needs 
-            SET status = :status, admin_notes = :admin_notes, approved_at = IF(:status = 'dipublikasikan', NOW(), approved_at)
+            UPDATE needs
+            SET status = :status,
+                admin_notes = :admin_notes,
+                approved_at = IF(:approved_status = 'dipublikasikan', NOW(), approved_at)
             WHERE id = :id
         ");
+
         return $stmt->execute([
-            ':id'          => $id,
-            ':status'      => $status,
-            ':admin_notes' => $admin_notes,
+            ':id'               => $id,
+            ':status'           => $status,
+            ':admin_notes'      => $admin_notes,
+            ':approved_status'  => $status,
         ]);
     }
+
+    // Mengambil seluruh laporan kendala untuk Dashboard Admin
+    public static function get_disputes_admin() {
+        $pdo = get_db_connection();
+
+        $stmt = $pdo->query("
+            SELECT
+                d.id AS dispute_id,
+                d.need_id,
+                d.reason,
+                d.status,
+                d.admin_notes AS dispute_admin_notes,
+                d.created_at AS dispute_created_at,
+                p.full_name AS reporter_name,
+                p.phone_number AS reporter_phone,
+                n.title AS need_title,
+                dp.name AS drop_point_name
+            FROM disputes d
+            JOIN needs n ON d.need_id = n.id
+            JOIN profiles p ON d.reporter_user_id = p.user_id
+            JOIN drop_points dp ON n.drop_point_id = dp.id
+            ORDER BY
+                CASE d.status
+                    WHEN 'open' THEN 1
+                    WHEN 'under_review' THEN 2
+                    WHEN 'resolved' THEN 3
+                    WHEN 'rejected' THEN 4
+                END,
+                d.created_at DESC
+        ");
+
+        return $stmt->fetchAll();
+    }
+
+    // Memperbarui status penanganan laporan kendala
+    
+    public static function update_dispute_status($dispute_id, $status, $admin_notes = null) {
+        $pdo = get_db_connection();
+
+        try {
+            $pdo->beginTransaction();
+
+            // Perbarui status laporan kendala
+            $stmt = $pdo->prepare("
+                UPDATE disputes
+                SET status = :status,
+                    admin_notes = :admin_notes,
+                    resolved_at = CASE
+                        WHEN :resolved_status IN ('resolved', 'rejected')
+                        THEN NOW()
+                        ELSE NULL
+                    END
+                WHERE id = :dispute_id
+            ");
+
+            $stmt->execute([
+                ':status' => $status,
+                ':admin_notes' => $admin_notes,
+                ':resolved_status' => $status,
+                ':dispute_id' => $dispute_id
+            ]);
+
+            // Jika laporan selesai atau ditolak,
+            // kembalikan status bantuan seperti semula
+            if (in_array($status, ['resolved', 'rejected'], true)) {
+                $stmt = $pdo->prepare("
+                    UPDATE needs
+                    SET status = 'menunggu_pengambilan'
+                    WHERE id = (
+                        SELECT need_id
+                        FROM disputes
+                        WHERE id = :dispute_id
+                    )
+                ");
+
+                $stmt->execute([
+                    ':dispute_id' => $dispute_id
+                ]);
+            }
+
+            $pdo->commit();
+            return true;
+
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+
 }

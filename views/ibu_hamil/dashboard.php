@@ -95,6 +95,14 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                         <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('dispute-form-<?= $n['id'] ?>').style.display='block';">
                             ⚠️ Laporkan Masalah / Paket Tidak Ada
                         </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onclick="openProofModal(<?= (int)$n['id'] ?>)">
+                            <span>📷</span> Lihat Bukti Bantuan
+                        </button>
+
                     </div>
 
                     <!-- Dispute Form Hidden -->
@@ -112,6 +120,39 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                         </form>
                     </div>
                 </div>
+
+                <!-- Modal Bukti Bantuan -->
+                <div id="proof-modal-<?= (int)$n['id'] ?>"
+                    class="proof-modal"
+                    onclick="closeProofModal(<?= (int)$n['id'] ?>)">
+
+                    <div class="proof-modal-content"
+                        onclick="event.stopPropagation()">
+
+                        <div class="proof-modal-header">
+                            <h3>Bukti Bantuan dari Donatur</h3>
+
+                            <button type="button"
+                                    class="proof-close"
+                                    onclick="closeProofModal(<?= (int)$n['id'] ?>)">
+                                &times;
+                            </button>
+                        </div>
+
+                        <div class="proof-modal-body">
+                            <img
+                                id="proof-image-<?= (int)$n['id'] ?>"
+                                src=""
+                                alt="Foto bukti bantuan dari donatur">
+
+                            <p id="proof-loading-<?= (int)$n['id'] ?>">
+                                Memuat foto bukti bantuan...
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
             <?php endif; ?>
         </div>
     <?php endforeach; ?>

@@ -152,4 +152,28 @@ class Donation {
             throw $e;
         }
     }
+
+    public static function get_proof_for_mother($need_id, $mother_user_id) {
+        $pdo = get_db_connection();
+
+        $stmt = $pdo->prepare("
+            SELECT d.proof_of_drop_path
+            FROM donations d
+            INNER JOIN needs n ON d.need_id = n.id
+            WHERE n.id = :need_id
+            AND n.user_id = :mother_user_id
+            AND d.proof_of_drop_path IS NOT NULL
+            AND d.status IN ('proof_uploaded', 'completed')
+            ORDER BY d.proof_uploaded_at DESC
+            LIMIT 1
+        ");
+
+        $stmt->execute([
+            ':need_id' => $need_id,
+            ':mother_user_id' => $mother_user_id
+        ]);
+
+        return $stmt->fetch();
+    }
+
 }
