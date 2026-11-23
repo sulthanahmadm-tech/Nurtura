@@ -23,19 +23,31 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
 <?php endif; ?>
 
 <!-- Ringkasan Profil Medis -->
-<div class="card" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
-    <h3 style="color: #065f46; margin-bottom: 8px;">Informasi Kesehatan Kehamilan Anda</h3>
-    <div style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.95rem;">
-        <div>Usia Kehamilan: <strong><?= $profile['gestational_age_weeks'] ?? '-' ?> Minggu</strong></div>
-        <div>HPL: <strong><?= $profile['estimated_birth_date'] ? date('d M Y', strtotime($profile['estimated_birth_date'])) : '-' ?></strong></div>
-        <div>
-            Ukuran LILA Terakhir: 
-            <strong style="color: <?= ($profile['lila_cm'] < 23.5) ? '#b91c1c' : '#047857' ?>;">
+<div class="card" style="border: 1px solid var(--border-color); background: #ffffff;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="color: var(--text-main); font-size: 1.25rem;">🩺 Informasi Kesehatan Kehamilan Anda</h3>
+        <span class="badge badge-info">Rekam Medis KIA</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div style="background: var(--bg-page); padding: 14px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Usia Kehamilan</span>
+            <strong style="font-size: 1.2rem; color: var(--text-main);"><?= $profile['gestational_age_weeks'] ?? '-' ?> Minggu</strong>
+        </div>
+        <div style="background: var(--bg-page); padding: 14px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Hari Perkiraan Lahir (HPL)</span>
+            <strong style="font-size: 1.1rem; color: var(--text-main);"><?= $profile['estimated_birth_date'] ? date('d M Y', strtotime($profile['estimated_birth_date'])) : '-' ?></strong>
+        </div>
+        <div style="background: var(--accent-coral-light); padding: 14px 18px; border-radius: var(--radius-sm); border: 1px solid #fecdd3;">
+            <span style="font-size: 0.85rem; color: var(--accent-coral-dark); display: block; margin-bottom: 4px;">Ukuran LILA Terakhir</span>
+            <strong style="font-size: 1.2rem; color: var(--accent-coral-dark);">
                 <?= number_format($profile['lila_cm'], 1) ?> cm 
-                <?= ($profile['lila_cm'] < 23.5) ? '(Indikasi Kurang Energi Kronis)' : '(Normal)' ?>
+                <span style="font-size: 0.8rem; font-weight: normal;"><?= ($profile['lila_cm'] < 23.5) ? '(Indikasi KEK)' : '(Normal)' ?></span>
             </strong>
         </div>
-        <div>Wilayah: <strong><?= htmlspecialchars($profile['district']) ?>, <?= htmlspecialchars($profile['regency_city']) ?></strong></div>
+        <div style="background: var(--bg-page); padding: 14px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Wilayah Domisili</span>
+            <strong style="font-size: 1.05rem; color: var(--text-main);"><?= htmlspecialchars($profile['district']) ?>, <?= htmlspecialchars($profile['regency_city']) ?></strong>
+        </div>
     </div>
 </div>
 

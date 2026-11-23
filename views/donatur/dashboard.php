@@ -64,9 +64,9 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
             </div>
 
             <?php if ($c['status'] === 'committed'): ?>
-                <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 16px; border-radius: 8px;">
-                    <h4 style="color: #065f46; margin-bottom: 8px;">Unggah Bukti Serah Terima di Posyandu</h4>
-                    <p style="font-size: 0.85rem; color: #047857; margin-bottom: 12px;">
+                <div style="background: var(--primary-light); border: 1px solid #bae6fd; padding: 20px; border-radius: var(--radius-sm);">
+                    <h4 style="color: #0369a1; margin-bottom: 8px;">Unggah Bukti Serah Terima di Posyandu</h4>
+                    <p style="font-size: 0.88rem; color: #0c4a6e; margin-bottom: 14px;">
                         Setelah mengantarkan paket langsung ke posyandu atau mengirimkannya via jasa kurir/ojek online, unggah foto bukti serah terima atau resi pengiriman di bawah ini:
                     </p>
                     <form action="index.php?action=upload-proof" method="POST" enctype="multipart/form-data">
@@ -83,7 +83,7 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                             <input type="text" id="donor_notes_<?= $c['id'] ?>" name="donor_notes" class="form-control" placeholder="Contoh: Paket dititipkan ke Ibu Bidan Sri pukul 10.00 WIB">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Kirim Bukti Serah Terima</button>
+                        <button type="submit" class="btn btn-coral">Kirim Bukti Serah Terima</button>
                     </form>
                 </div>
             <?php endif; ?>

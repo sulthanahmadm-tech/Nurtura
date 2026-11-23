@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <?= render_status_badge($need['status']) ?>
-            <span class="badge" style="background: #fee2e2; color: #991b1b; font-size: 0.85rem;">
+            <span class="badge badge-coral">
                 Indikasi KEK: LILA <?= number_format($need['lila_measurement'], 1) ?> cm (&lt; 23.5 cm)
             </span>
         </div>
@@ -30,8 +30,8 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
         </div>
 
         <div style="margin-bottom: 24px;">
-            <h4 style="margin-bottom: 6px;">Paket Bahan Pangan Bergizi yang Dibutuhkan:</h4>
-            <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 16px; border-radius: 8px; color: #065f46; font-size: 1rem;">
+            <h4 style="margin-bottom: 8px;">Paket Bahan Pangan Bergizi yang Dibutuhkan:</h4>
+            <div style="background: var(--primary-light); border: 1px solid #bae6fd; padding: 18px; border-radius: var(--radius-sm); color: #0369a1; font-size: 1rem;">
                 <?= nl2br(htmlspecialchars($need['food_items_needed'])) ?>
             </div>
         </div>
@@ -59,7 +59,7 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                         <strong>Perhatian Donatur:</strong> Dengan menekan tombol di bawah, Anda berkomitmen membantu paket ini. Status akan dikunci selama <strong>48 Jam</strong> untuk Anda mengantarkan / mengirimkan paket ke Posyandu di atas dan mengunggah bukti tanda terima.
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 14px;" data-confirm="Apakah Anda bersedia berkomitmen menyediakan paket pangan ini dan menyerahkannya ke Posyandu dalam 48 jam?">
+                    <button type="submit" class="btn btn-coral" style="width: 100%; font-size: 1.05rem; padding: 14px;" data-confirm="Apakah Anda bersedia berkomitmen menyediakan paket pangan ini dan menyerahkannya ke Posyandu dalam 48 jam?">
                         🤝 Saya Bersedia Membantu (Kunci Komitmen 48 Jam)
                     </button>
                 </form>

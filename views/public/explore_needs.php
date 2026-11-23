@@ -26,9 +26,9 @@ require_once __DIR__ . '/../../app/helpers/format_helper.php';
         <?php foreach ($needs as $n): ?>
             <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                        <span class="badge badge-success">Terverifikasi Admin</span>
-                        <span style="font-size: 0.85rem; color: #b91c1c; font-weight: 700; background: #fee2e2; padding: 2px 8px; border-radius: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                        <span class="badge badge-info">✓ Terverifikasi Admin</span>
+                        <span class="badge badge-coral">
                             LILA: <?= number_format($n['lila_measurement'], 1) ?> cm (KEK)
                         </span>
                     </div>
