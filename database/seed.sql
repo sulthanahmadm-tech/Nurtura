@@ -1,6 +1,6 @@
 -- Seed Data for Nurtura Platform
 -- Password default semua akun contoh: password123
--- Hash bcrypt: $2y$10$e8w612bI38pDfxG3m3qLhOzZJ2B0h9d/dO/w7eHlT/uWomfS6l8y2
+-- Hash bcrypt valid: $2y$10$0rFUAPfgXqtrJGahBhQb2OXB3/i72KagydYCk9BQU.QPRdgT6ZwOW
 
 USE `nurtura_db`;
 
@@ -10,10 +10,10 @@ USE `nurtura_db`;
 -- id 3: Ibu Hamil Rahma (KEK, LILA 22 cm)
 -- id 4: Donatur Budi
 INSERT INTO `users` (`id`, `email`, `password_hash`, `role`) VALUES
-(1, 'admin@nurtura.local', '$2y$10$e8w612bI38pDfxG3m3qLhOzZJ2B0h9d/dO/w7eHlT/uWomfS6l8y2', 'admin'),
-(2, 'ibu.siti@nurtura.local', '$2y$10$e8w612bI38pDfxG3m3qLhOzZJ2B0h9d/dO/w7eHlT/uWomfS6l8y2', 'ibu_hamil'),
-(3, 'ibu.rahma@nurtura.local', '$2y$10$e8w612bI38pDfxG3m3qLhOzZJ2B0h9d/dO/w7eHlT/uWomfS6l8y2', 'ibu_hamil'),
-(4, 'donatur.budi@nurtura.local', '$2y$10$e8w612bI38pDfxG3m3qLhOzZJ2B0h9d/dO/w7eHlT/uWomfS6l8y2', 'donatur')
+(1, 'admin@nurtura.local', '$2y$10$0rFUAPfgXqtrJGahBhQb2OXB3/i72KagydYCk9BQU.QPRdgT6ZwOW', 'admin'),
+(2, 'ibu.siti@nurtura.local', '$2y$10$0rFUAPfgXqtrJGahBhQb2OXB3/i72KagydYCk9BQU.QPRdgT6ZwOW', 'ibu_hamil'),
+(3, 'ibu.rahma@nurtura.local', '$2y$10$0rFUAPfgXqtrJGahBhQb2OXB3/i72KagydYCk9BQU.QPRdgT6ZwOW', 'ibu_hamil'),
+(4, 'donatur.budi@nurtura.local', '$2y$10$0rFUAPfgXqtrJGahBhQb2OXB3/i72KagydYCk9BQU.QPRdgT6ZwOW', 'donatur')
 ON DUPLICATE KEY UPDATE `email` = VALUES(`email`);
 
 -- 2. Insert Profil Pengguna
