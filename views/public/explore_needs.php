@@ -3,9 +3,9 @@ require_once __DIR__ . '/../layouts/header.php';
 require_once __DIR__ . '/../../app/helpers/format_helper.php';
 ?>
 
-<div style="margin-bottom: 24px;">
-    <h2>Katalog Kebutuhan Gizi Ibu Hamil Terverifikasi</h2>
-    <p style="color: var(--text-muted);">
+<div class="card" style="padding: 24px 28px; margin-bottom: 24px;">
+    <h2 style="font-size: 1.5rem; color: #0f172a; margin-bottom: 4px;">Katalog Kebutuhan Gizi Ibu Hamil Terverifikasi</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
         Semua pengajuan di bawah ini telah divalidasi oleh tim medis/admin NurturaGuard melalui verifikasi lembar Buku KIA dan indikator Kurang Energi Kronis (KEK).
     </p>
 </div>

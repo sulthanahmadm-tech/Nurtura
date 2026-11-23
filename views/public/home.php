@@ -11,11 +11,11 @@ require_once __DIR__ . '/../layouts/header.php';
         Platform pencegahan stunting berbasis komunitas. Menghubungkan ibu hamil berisiko Kurang Energi Kronis (KEK) dengan donatur peduli melalui titik penyaluran resmi Posyandu & Bidan Desa.
     </p>
     <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
-        <a href="index.php?page=explore" class="btn btn-primary" style="font-size: 1rem; padding: 12px 26px;">
+        <a href="index.php?page=explore" class="btn btn-primary" style="font-size: 1rem; padding: 12px 28px;">
             🔍 Lihat Kebutuhan yang Memerlukan Bantuan
         </a>
-        <a href="index.php?page=register" class="btn btn-coral" style="font-size: 1rem; padding: 12px 26px;">
-            🤝 Gabung Menjadi Donatur / Ajukan Kebutuhan
+        <a href="index.php?page=register" class="btn btn-dark" style="font-size: 1rem; padding: 12px 28px;">
+            ✍️ Gabung Menjadi Donatur / Ajukan Kebutuhan
         </a>
     </div>
 </div>
