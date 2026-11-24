@@ -241,6 +241,35 @@ a:hover {
 .badge-secondary { background: #f1f5f9; color: #475569; }
 .badge-dark { background: var(--secondary); color: #f8fafc; }
 
+/* Filter Pills Katalog (Taste-Design) */
+.filter-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+.filter-pill {
+    padding: 7px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: #ffffff;
+    color: #475569;
+    transition: all 0.2s ease;
+}
+.filter-pill:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+.filter-pill.active {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+}
+
 /* 3. Flashcard / Fitur / Informasi / Banner: Putih Polos #FFFFFF */
 .card {
     background: #ffffff;
@@ -300,6 +329,85 @@ a:hover {
     padding: 48px 36px;
     margin-bottom: 28px;
     box-shadow: var(--shadow);
+}
+.hero-centered {
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 32px 16px 20px;
+}
+.hero-centered h1 {
+    font-size: 2.85rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+}
+.hero-centered p {
+    font-size: 1.15rem;
+    color: #475569;
+    line-height: 1.65;
+    max-width: 720px;
+    margin: 0 auto 28px;
+}
+.hero-quote-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #f0f9ff;
+    border: 1px solid rgba(2, 132, 199, 0.2);
+    border-radius: var(--radius-pill);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0284c7;
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+}
+.step-num-editorial {
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: #0284c7;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 12px;
+}
+.comparison-wrapper {
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: #ffffff;
+    box-shadow: var(--shadow);
+}
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.92rem;
+}
+.comparison-table th {
+    padding: 16px 20px;
+    background: #f8fafc;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 1px solid var(--border-color);
+}
+.comparison-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    color: #334155;
+    line-height: 1.5;
+}
+.comparison-table tr:last-child td {
+    border-bottom: none;
+}
+.comparison-table tr:hover td {
+    background: #f8fafc;
+}
+.cell-highlight {
+    background: #f0f9ff;
+    color: #0c4a6e;
+    font-weight: 600;
 }
 .hero-split {
     display: grid;
@@ -553,6 +661,76 @@ footer {
     to { opacity: 1; transform: scale(1); }
 }
 
+/* Need Status Progress Tracker (Stepper) */
+.timeline-track {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px 0 24px 0;
+    padding: 0 10px;
+}
+.timeline-track::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 30px;
+    right: 30px;
+    height: 3px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+.timeline-step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 70px;
+}
+.timeline-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #64748b;
+    margin-bottom: 6px;
+    transition: all 0.2s ease;
+}
+.timeline-step.completed .timeline-dot {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+}
+.timeline-step.active .timeline-dot {
+    background: var(--accent-cta);
+    border-color: #0f172a;
+    color: #0f172a;
+    box-shadow: 0 0 0 4px rgba(199, 242, 43, 0.4);
+    transform: scale(1.15);
+}
+.timeline-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #64748b;
+    max-width: 85px;
+    line-height: 1.25;
+}
+.timeline-step.active .timeline-label {
+    color: #0f172a;
+    font-weight: 800;
+}
+.timeline-step.completed .timeline-label {
+    color: #0284c7;
+}
+
 /* Responsivitas Navbar & Layar Kecil */
 @media (max-width: 992px) {
     .brand .brand-tag {
@@ -576,5 +754,215 @@ footer {
     .nav-links {
         flex-wrap: wrap;
         gap: 6px;
+    }
+}
+
+/* ========================================================
+   MODERN DASHBOARD SUITE STYLES (DONATUR & ADMIN)
+   ======================================================== */
+
+/* Countdown Timer Pill & Bar */
+.countdown-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    font-variant-numeric: tabular-nums;
+}
+.countdown-pill.urgent {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+    animation: pulseMuted 2s infinite ease-in-out;
+}
+@keyframes pulseMuted {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(0.98); }
+}
+
+/* Dropzone & Live Upload Preview */
+.upload-dropzone {
+    border: 2px dashed #93c5fd;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.upload-dropzone:hover, .upload-dropzone.dragover {
+    border-color: #0284c7;
+    background: #f0f9ff;
+}
+.upload-preview-container {
+    margin-top: 14px;
+    display: none;
+    text-align: center;
+}
+.upload-preview-img {
+    max-width: 280px;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+    object-fit: cover;
+}
+
+/* Kia Inspector Modal (Admin Zoom & Rotate) */
+.kia-inspector-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.kia-inspector-content {
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 960px;
+    width: 100%;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+.kia-inspector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: #f8fafc;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.kia-inspector-toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.kia-inspector-body {
+    padding: 24px;
+    overflow: auto;
+    text-align: center;
+    background: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 440px;
+    position: relative;
+}
+.kia-inspect-img {
+    max-width: 100%;
+    max-height: 62vh;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* ========================================================
+   AUTH PAGES (LOGIN & REGISTER - EDITORIAL & ANTI-SLOP)
+   ======================================================== */
+.auth-container {
+    max-width: 480px;
+    margin: 40px auto 60px auto;
+}
+.auth-container.register {
+    max-width: 580px;
+}
+.auth-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 10px 30px rgba(2, 132, 199, 0.06);
+}
+.role-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.role-card {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    user-select: none;
+}
+.role-card:hover {
+    border-color: #93c5fd;
+    background: #f8fafc;
+}
+.role-card.selected {
+    border-color: #0284c7;
+    background: #f0f9ff;
+    box-shadow: 0 0 0 1px #0284c7;
+}
+.role-card input[type="radio"] {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    margin: 0;
+    accent-color: #0284c7;
+    cursor: pointer;
+}
+.role-card-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+    padding-right: 20px;
+}
+.role-card-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* Demo Quick Fill Buttons */
+.demo-fill-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+}
+.demo-fill-btn:hover {
+    border-color: #0284c7;
+    background: #f0f9ff;
+    color: #0284c7;
+    transform: translateY(-1px);
+}
+@media (max-width: 540px) {
+    .role-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .auth-card {
+        padding: 24px 20px;
     }
 }

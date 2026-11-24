@@ -6,6 +6,6 @@
             <p style="margin-top: 6px; font-size: 0.8rem; color: #94a3b8;">Nurtura bukan pengganti konsultasi medis. Seluruh pengajuan kebutuhan pangan divalidasi berdasarkan rujukan Buku KIA resmi.</p>
         </div>
     </footer>
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main.js?v=<?= filemtime(__DIR__ . '/../../public/assets/js/main.js') ?>"></script>
 </body>
 </html>

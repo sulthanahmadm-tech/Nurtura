@@ -26,3 +26,6 @@ storage/uploads/drop_proofs/*
 storage/uploads/kia_documents/*
 !storage/uploads/kia_documents/.htaccess
 !storage/uploads/kia_documents/sample_*.jpg
+
+# Local Backups & Duplicate Project Folders
+Proyek Prak. PemWeb/

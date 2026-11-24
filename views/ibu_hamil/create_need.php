@@ -56,19 +56,60 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                 <small style="color: var(--text-muted);">Paket donasi akan dikirim donatur ke titik ini. Anda tidak perlu membagikan alamat rumah pribadi.</small>
             </div>
 
-            <div class="form-group" style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px dashed var(--border-color);">
+            <div class="form-group" style="background: #f8fafc; padding: 18px; border-radius: var(--radius-sm); border: 1px dashed var(--border-color);">
                 <label for="kia_document"><strong>Unggah Lembar Pemeriksaan Buku KIA (Foto / Scan):</strong></label>
-                <input type="file" id="kia_document" name="kia_document" class="form-control" accept="image/jpeg,image/png,application/pdf" required>
+                <input type="file" id="kia_document" name="kia_document" class="form-control" accept="image/jpeg,image/png,application/pdf" required onchange="previewKiaImage(this)">
                 <small style="color: #475569; display: block; margin-top: 6px;">
-                    📌 <strong>Penting:</strong> Lampirkan foto lembar Buku KIA yang menunjukkan data identitas kehamilan, HPL, dan catatan LILA. Berkas ini disimpan di folder privat terenkripsi dan <strong>hanya dapat dilihat oleh Admin NurturaGuard</strong> untuk validasi medis.
+                    <strong>Ketentuan Validasi:</strong> Lampirkan foto lembar Buku KIA yang menunjukkan data identitas kehamilan, HPL, dan catatan LILA. Berkas ini disimpan di folder privat terenkripsi dan <strong>hanya dapat dilihat oleh Admin NurturaGuard</strong> untuk validasi medis.
                 </small>
+                
+                <!-- Pratinjau Gambar KIA -->
+                <div id="kia-preview-box" style="display: none; margin-top: 14px; padding: 12px; background: #ffffff; border: 1px solid #bae6fd; border-radius: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img id="kia-preview-img" src="" alt="Pratinjau Buku KIA" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; display: none;">
+                        <div>
+                            <span class="badge badge-info" style="font-size: 0.7rem;">Dokumen Siap Diunggah</span>
+                            <div id="kia-preview-name" style="font-size: 0.88rem; font-weight: 700; color: #0f172a; margin-top: 4px;"></div>
+                            <span id="kia-preview-size" style="font-size: 0.78rem; color: #64748b;"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 1.05rem; padding: 12px;">
-                🚀 Kirim Pengajuan ke Admin NurturaGuard
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; font-size: 1.05rem; padding: 14px;">
+                Kirim Pengajuan ke Admin NurturaGuard
             </button>
         </form>
     </div>
 </div>
+
+<script>
+function previewKiaImage(input) {
+    const box = document.getElementById('kia-preview-box');
+    const img = document.getElementById('kia-preview-img');
+    const nameEl = document.getElementById('kia-preview-name');
+    const sizeEl = document.getElementById('kia-preview-size');
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        nameEl.textContent = file.name;
+        sizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
+        box.style.display = 'block';
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            img.style.display = 'none';
+        }
+    } else {
+        box.style.display = 'none';
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

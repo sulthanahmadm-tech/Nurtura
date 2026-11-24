@@ -14,7 +14,14 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
     <header class="navbar">
         <div class="container nav-container">
             <a href="index.php?page=home" class="brand">
-                <span>🌱 <?= APP_NAME ?></span>
+                <span style="display: inline-flex; align-items: center; gap: 8px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+                        <path d="M12 22v-9"/>
+                        <path d="M12 13c-3-2-6-1-7 2 3 1 6 0 7-2z"/>
+                        <path d="M12 13c3-3 6-2 7 1-3 2-6 0-7-1z"/>
+                    </svg>
+                    <span><?= APP_NAME ?></span>
+                </span>
                 <span class="brand-tag">Cegah Stunting</span>
             </a>
             <nav>
@@ -24,12 +31,12 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                     
                     <?php if (is_logged_in()): ?>
                         <?php if (is_admin()): ?>
-                            <li><a href="index.php?page=admin-dashboard" class="btn btn-warning btn-sm">🛡️ Admin</a></li>
+                            <li><a href="index.php?page=admin-dashboard" class="btn btn-warning btn-sm">Panel Admin</a></li>
                         <?php elseif (is_ibu_hamil()): ?>
-                            <li><a href="index.php?page=ibu-hamil-dashboard">Dashboard Ibu Hamil</a></li>
+                            <li><a href="index.php?page=ibu-hamil-dashboard">Dashboard Saya</a></li>
                             <li><a href="index.php?page=create-need" class="btn btn-primary btn-sm">+ Ajukan Kebutuhan</a></li>
                         <?php elseif (is_donatur()): ?>
-                            <li><a href="index.php?page=donatur-dashboard">Komitmen Donasi Saya</a></li>
+                            <li><a href="index.php?page=donatur-dashboard">Komitmen Donasi</a></li>
                         <?php endif; ?>
                         
                         <?php 

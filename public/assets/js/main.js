@@ -20,27 +20,45 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleFields();
     }
 
-    // 2. Countdown Timer 48 Jam untuk Donatur
+    // 2. Countdown Timer 48 Jam untuk Donatur (Anti-Slop & Dinamis)
     const timerElements = document.querySelectorAll('.countdown-timer');
     timerElements.forEach(function (el) {
         const expiresAtStr = el.getAttribute('data-expires');
         if (!expiresAtStr) return;
 
         const targetTime = new Date(expiresAtStr).getTime();
+        const parentPill = el.closest('.countdown-pill');
+        const progressBar = el.closest('.card')?.querySelector('.countdown-progress-bar');
 
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetTime - now;
 
-            if (distance < 0) {
-                el.innerHTML = "WAKTU HABIS (Auto-Release)";
-                el.style.color = "#dc2626";
+            if (distance <= 0) {
+                el.innerHTML = "Waktu Habis (Auto-Release)";
+                if (parentPill) {
+                    parentPill.classList.add('urgent');
+                    parentPill.style.background = '#fee2e2';
+                    parentPill.style.color = '#991b1b';
+                }
+                if (progressBar) progressBar.style.width = '0%';
                 return;
+            }
+
+            const total48HoursMs = 48 * 60 * 60 * 1000;
+            const remainingRatio = Math.max(0, Math.min(100, (distance / total48HoursMs) * 100));
+            if (progressBar) {
+                progressBar.style.width = remainingRatio + '%';
             }
 
             const hours = Math.floor(distance / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Ubah visual ke mode urgent jika tersisa < 6 jam
+            if (hours < 6 && parentPill) {
+                parentPill.classList.add('urgent');
+            }
 
             el.innerHTML = `${hours}j ${minutes}m ${seconds}d tersisa`;
         }
@@ -115,5 +133,65 @@ function openProofModal(needId) {
                     modal.style.display = 'none';
                 }
             );
+            closeKiaInspector();
         }
     });
+
+    // 4. Modal Inspeksi Buku KIA (Zoom & Rotate untuk Admin)
+    let currentZoom = 1;
+    let currentRotation = 0;
+
+    window.openKiaInspector = function (src, title) {
+        const modal = document.getElementById('kia-inspector-modal');
+        const img = document.getElementById('kia-inspect-img');
+        const titleEl = document.getElementById('kia-inspect-title');
+        if (!modal || !img) return;
+
+        currentZoom = 1;
+        currentRotation = 0;
+        img.src = src;
+        img.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg)`;
+        if (titleEl) titleEl.textContent = title || 'Inspeksi Lembar Buku KIA';
+
+        modal.style.display = 'flex';
+    };
+
+    window.closeKiaInspector = function () {
+        const modal = document.getElementById('kia-inspector-modal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.zoomKia = function (delta) {
+        currentZoom = Math.min(3, Math.max(0.5, currentZoom + delta));
+        const img = document.getElementById('kia-inspect-img');
+        if (img) img.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg)`;
+    };
+
+    window.rotateKia = function () {
+        currentRotation = (currentRotation + 90) % 360;
+        const img = document.getElementById('kia-inspect-img');
+        if (img) img.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg)`;
+    };
+
+    window.resetKia = function () {
+        currentZoom = 1;
+        currentRotation = 0;
+        const img = document.getElementById('kia-inspect-img');
+        if (img) img.style.transform = `scale(1) rotate(0deg)`;
+    };
+
+    // 5. Live Image Preview Helper (Dropzone)
+    window.previewSelectedImage = function (input, previewId, containerId) {
+        const file = input.files[0];
+        const preview = document.getElementById(previewId);
+        const container = document.getElementById(containerId);
+
+        if (file && preview && container) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
