@@ -38,6 +38,16 @@ function format_datetime_id($datetime_str) {
 }
 
 function render_need_progress_tracker($status) {
+    if ($status === 'ditolak') {
+        return '<div class="alert alert-danger" style="margin: 14px 0 6px 0; padding: 10px 16px; font-size: 0.84rem; border-radius: 12px;"><strong>Pengajuan Ditolak:</strong> Berkas pemeriksaan Buku KIA belum memenuhi kriteria program pencegahan KEK.</div>';
+    }
+    if ($status === 'dispute') {
+        return '<div class="alert alert-danger" style="margin: 14px 0 6px 0; padding: 10px 16px; font-size: 0.84rem; border-radius: 12px;"><strong>Laporan Kendala (Dispute):</strong> Bantuan sedang dalam penanganan eskalasi oleh admin medis dan posyandu mitra.</div>';
+    }
+    if ($status === 'kedaluwarsa_hpl') {
+        return '<div class="alert alert-warning" style="margin: 14px 0 6px 0; padding: 10px 16px; font-size: 0.84rem; border-radius: 12px;"><strong>Pengajuan Ditutup:</strong> Masa pengajuan telah melewati taksiran tanggal persalinan (HPL).</div>';
+    }
+
     $stages = [
         1 => 'Verifikasi KIA',
         2 => 'Katalog Terbuka',
@@ -51,7 +61,7 @@ function render_need_progress_tracker($status) {
     elseif ($status === 'dipublikasikan') $current = 2;
     elseif ($status === 'dalam_komitmen') $current = 3;
     elseif ($status === 'menunggu_pengambilan') $current = 4;
-    elseif ($status === 'selesai') $current = 5;
+    elseif ($status === 'selesai') $current = 6; // Selesai: seluruh 5 tahap lengkap (✓)
 
     $html = '<div class="timeline-track">';
     foreach ($stages as $stepNum => $stageLabel) {

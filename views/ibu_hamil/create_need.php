@@ -40,7 +40,12 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
     </a>
 
     <div class="form-intro">
-        <div class="intro-icon" aria-hidden="true">🥗</div>
+        <div class="intro-icon" aria-hidden="true" style="color: #0284c7;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2z"></path>
+                <path d="M12 6v6l4 2"></path>
+            </svg>
+        </div>
         <div>
             <span class="badge badge-info">NurturaNeeds · Pengajuan Ibu Hamil</span>
             <h1>Ajukan Kebutuhan Pangan Bergizi</h1>
@@ -141,16 +146,20 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                         <small class="field-help">Format yang diterima: JPG, PNG, atau PDF. Pastikan foto memuat catatan tanggal pemeriksaan dan ukuran LILA secara jelas.</small>
                     </div>
 
-                    <!-- Live Image Preview Container -->
+                    <!-- Live Image/PDF Preview Container -->
                     <div id="kia-preview-container" style="display: none; margin-top: 16px; text-align: center; background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #cbd5e1;">
                         <span style="font-size: 0.78rem; font-weight: 700; color: #0284c7; display: block; margin-bottom: 8px;">
                             ✓ Pratinjau Dokumen Lembar Buku KIA Terpilih:
                         </span>
-                        <img id="kia-preview-img" src="" alt="Pratinjau Lembar KIA" style="max-height: 240px; max-width: 100%; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
+                        <img id="kia-preview-img" src="" alt="Pratinjau Lembar KIA" style="max-height: 240px; max-width: 100%; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); margin: 0 auto;">
+                        <div id="kia-preview-pdf" style="display: none; padding: 12px; background: #f0f9ff; border-radius: 8px; color: #0369a1; font-size: 0.88rem;"></div>
                     </div>
 
                     <div class="privacy-note">
-                        <span aria-hidden="true">🔒</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
                         <span><strong>Privasi Medis Terjamin:</strong> Berkas Buku KIA hanya digunakan untuk proses verifikasi oleh Admin NurturaGuard dan tidak pernah dipublikasikan secara umum.</span>
                     </div>
                 </div>
@@ -170,20 +179,32 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
 </div>
 
 <script>
-    // Live Image Preview for Buku KIA
+    // Live Image/PDF Preview for Buku KIA
     function previewKiaImage(input) {
         const file = input.files && input.files[0];
         const container = document.getElementById('kia-preview-container');
         const img = document.getElementById('kia-preview-img');
+        const pdfNotice = document.getElementById('kia-preview-pdf');
         if (!container || !img) return;
 
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                img.src = e.target.result;
+        if (file) {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    if (pdfNotice) pdfNotice.style.display = 'none';
+                    container.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type === 'application/pdf') {
+                img.style.display = 'none';
+                if (pdfNotice) {
+                    pdfNotice.style.display = 'block';
+                    pdfNotice.innerHTML = '📄 <strong>Dokumen PDF Terpilih:</strong> ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                }
                 container.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            }
         } else {
             container.style.display = 'none';
         }

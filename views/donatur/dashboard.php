@@ -94,7 +94,12 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                         <div class="card-dark-3d" style="padding: 20px 24px; margin-bottom: 22px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 1.1rem;">⏳</span>
+                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(199, 242, 43, 0.15); display: flex; align-items: center; justify-content: center; color: #c7f22b; flex-shrink: 0;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                    </div>
                                     <span style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #c7f22b;">
                                         Tenggat Waktu Drop-Point (Maksimal 48 Jam)
                                     </span>

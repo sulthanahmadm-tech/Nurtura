@@ -10,14 +10,15 @@ $usia_hari      = $usia_minggu * 7;
 $hpl_formatted  = !empty($profile['estimated_birth_date']) ? date('d M Y', strtotime($profile['estimated_birth_date'])) : 'Belum diisi';
 
 $raw_lila       = $lilaValue ?? $profile['lila_cm'] ?? null;
-$lila_tampil    = ($raw_lila !== null && $raw_lila !== '') ? number_format((float)$raw_lila, 1) : '-';
-$is_kek         = isset($lilaAtRisk) ? (bool)$lilaAtRisk : ($raw_lila !== null && $raw_lila !== '' && (float)$raw_lila < 23.5);
+$has_lila       = ($raw_lila !== null && $raw_lila !== '' && (float)$raw_lila > 0);
+$lila_tampil    = $has_lila ? number_format((float)$raw_lila, 1) : '-';
+$is_kek         = $has_lila && ((float)$raw_lila < 23.5);
 
 $domisili       = trim(($profile['district'] ?? '') . ', ' . ($profile['regency_city'] ?? ''), ', ');
 if ($domisili === '') $domisili = 'Belum diisi';
 
-$status_lila    = $is_kek ? 'Risiko KEK (< 23.5 cm)' : 'Normal / Aman (≥ 23.5 cm)';
-$badge_lila     = $is_kek ? 'badge-kek-risk' : 'badge-kek-normal';
+$status_lila    = !$has_lila ? 'Belum Ada Data' : ($is_kek ? 'Risiko KEK (< 23.5 cm)' : 'Normal / Aman (≥ 23.5 cm)');
+$badge_lila     = !$has_lila ? 'badge-secondary' : ($is_kek ? 'badge-kek-risk' : 'badge-kek-normal');
 $needs_list     = is_array($needs ?? null) ? $needs : [];
 ?>
 
@@ -81,7 +82,7 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
         <!-- KARTU 1 (5 Kolom): Visual Fetus Glow & Ringkasan Perjalanan Kehamilan -->
         <div class="col-span-5 card-modern" style="padding: 28px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(226, 232, 240, 0.9);">
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
                     <div>
                         <span style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #0284c7;">
                             Fase Perkembangan Janin
@@ -159,17 +160,17 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
 
                 <!-- Canvas/SVG Gauge Embed -->
                 <div style="padding: 10px 0;">
-                    <div data-medical-chart="lila-gauge" data-lila="<?= (float)($raw_lila ?? 23.5) ?>"></div>
+                    <div id="lila-gauge-dashboard" data-medical-chart="lila-gauge" data-lila="<?= $has_lila ? (float)$raw_lila : 0 ?>"></div>
                 </div>
             </div>
 
             <!-- Pedoman Medis Kemenkes -->
-            <div style="background: #f8fafc; border-left: 3px solid <?= $is_kek ? '#ef4444' : '#10b981' ?>; border-radius: 0 12px 12px 0; padding: 12px 14px; margin-top: 14px;">
+            <div style="background: #f8fafc; border-left: 3px solid <?= !$has_lila ? '#64748b' : ($is_kek ? '#ef4444' : '#10b981') ?>; border-radius: 0 12px 12px 0; padding: 12px 14px; margin-top: 14px;">
                 <div style="font-size: 0.78rem; font-weight: 700; color: #0f172a;">
-                    <?= $is_kek ? 'Perhatian Gizi (Risiko KEK)' : 'Status Gizi Baik' ?>
+                    <?= !$has_lila ? 'Informasi Pengukuran' : ($is_kek ? 'Perhatian Gizi (Risiko KEK)' : 'Status Gizi Baik') ?>
                 </div>
                 <p style="font-size: 0.74rem; color: #64748b; margin: 4px 0 0 0; line-height: 1.45;">
-                    <?= $is_kek ? 'LILA di bawah 23,5 cm menandakan risiko Kurang Energi Kronis. Prioritaskan asupan protein hewani dan konsultasikan ke bidan.' : 'Ukuran LILA memenuhi standar Kemenkes. Pertahankan pola makan bergizi seimbang dan konsumsi Tablet Tambah Darah (TTD).' ?>
+                    <?= !$has_lila ? 'Ukuran LILA belum tercatat. Ambang batas normal minimal standar Kemenkes adalah 23,5 cm.' : ($is_kek ? 'LILA di bawah 23,5 cm menandakan risiko Kurang Energi Kronis. Prioritaskan asupan protein hewani dan konsultasikan ke bidan.' : 'Ukuran LILA memenuhi standar Kemenkes. Pertahankan pola makan bergizi seimbang dan konsumsi Tablet Tambah Darah (TTD).') ?>
                 </p>
             </div>
         </div>
@@ -292,9 +293,13 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
                         <?php if (($n['status'] ?? '') === 'menunggu_pengambilan'): ?>
                             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 18px; margin-top: 14px;">
                                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                    <span style="font-size: 1.1rem;">🎉</span>
+                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; color: #15803d; flex-shrink: 0;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
                                     <h4 style="font-size: 0.95rem; font-weight: 800; color: #166534; margin: 0;">
-                                        Paket Pangan Telah Tiba di Posyandu!
+                                        Paket Pangan Telah Tiba di Posyandu
                                     </h4>
                                 </div>
                                 <p style="font-size: 0.82rem; color: #15803d; margin: 0 0 14px 0;">
@@ -310,8 +315,12 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
                                         </button>
                                     </form>
 
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="openProofModal(<?= (int)$n['id'] ?>)">
-                                        📷 Lihat Bukti Bantuan Donatur
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="openProofModal(<?= (int)$n['id'] ?>)" style="display: inline-flex; align-items: center; gap: 6px;">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                            <circle cx="12" cy="13" r="4"></circle>
+                                        </svg>
+                                        Lihat Bukti Bantuan Donatur
                                     </button>
 
                                     <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('dispute-form-<?= (int)$n['id'] ?>').style.display = (document.getElementById('dispute-form-<?= (int)$n['id'] ?>').style.display === 'none' ? 'block' : 'none')">
@@ -358,40 +367,5 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
         <?php endif; ?>
     </div>
 </div>
-
-<script>
-    function openProofModal(needId) {
-        const modal = document.getElementById('proof-modal-' + needId);
-        const img = document.getElementById('proof-image-' + needId);
-        const loading = document.getElementById('proof-loading-' + needId);
-        if (!modal) return;
-
-        modal.classList.add('active');
-        modal.style.display = 'flex';
-        loading.style.display = 'block';
-        loading.textContent = 'Memuat foto bukti bantuan...';
-        img.style.display = 'none';
-
-        img.onload = function () {
-            img.style.display = 'block';
-            loading.style.display = 'none';
-        };
-        img.onerror = function () {
-            img.style.display = 'none';
-            loading.textContent = 'Foto bukti bantuan belum tersedia atau gagal dimuat.';
-            loading.style.display = 'block';
-        };
-
-        img.src = 'index.php?action=view-proof&need_id=' + encodeURIComponent(needId);
-    }
-
-    function closeProofModal(needId) {
-        const modal = document.getElementById('proof-modal-' + needId);
-        if (modal) {
-            modal.classList.remove('active');
-            modal.style.display = 'none';
-        }
-    }
-</script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

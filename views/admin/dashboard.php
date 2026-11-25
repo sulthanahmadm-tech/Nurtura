@@ -155,8 +155,13 @@ foreach ($disputes as $dispute) {
                                 <button
                                     type="button"
                                     class="btn-lime-sm btn-lime"
-                                    onclick="openKiaInspector('index.php?action=view-kia&file=<?= urlencode($pn['kia_document_path']) ?>', 'Buku KIA: <?= htmlspecialchars(addslashes($pn['full_name'])) ?> (LILA <?= number_format($pn['lila_measurement'], 1) ?> cm)')">
-                                    🔍 Buka Inspeksi Lembar KIA
+                                    onclick="openKiaInspector('index.php?action=view-kia&file=<?= urlencode($pn['kia_document_path']) ?>', 'Buku KIA: <?= htmlspecialchars(addslashes($pn['full_name'])) ?> (LILA <?= number_format($pn['lila_measurement'], 1) ?> cm)')"
+                                    style="display: inline-flex; align-items: center; gap: 6px;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    Buka Inspeksi Lembar KIA
                                 </button>
                                 <a
                                     href="index.php?action=view-kia&file=<?= urlencode($pn['kia_document_path']) ?>"

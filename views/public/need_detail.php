@@ -4,7 +4,8 @@ require_once __DIR__ . '/../../app/helpers/format_helper.php';
 require_once __DIR__ . '/../../app/helpers/auth_helper.php';
 
 $lila_val = (float)($need['lila_measurement'] ?? 0);
-$is_kek = $lila_val < 23.5;
+$has_lila = $lila_val > 0;
+$is_kek = $has_lila && ($lila_val < 23.5);
 ?>
 
 <div style="max-width: 980px; margin: 0 auto; padding-bottom: 40px;">
@@ -26,9 +27,15 @@ $is_kek = $lila_val < 23.5;
                 <?= render_status_badge($need['status']) ?>
                 <span class="badge badge-info">Validasi Medis Buku KIA Terverifikasi</span>
             </div>
-            <span class="badge <?= $is_kek ? 'badge-kek-risk' : 'badge-kek-normal' ?>" style="font-size: 0.82rem; padding: 6px 14px; font-weight: 700;">
-                <?= $is_kek ? 'Indikasi KEK: LILA ' . number_format($lila_val, 1) . ' cm (< 23,5 cm)' : 'LILA Normal: ' . number_format($lila_val, 1) . ' cm' ?>
-            </span>
+            <?php if ($has_lila): ?>
+                <span class="badge <?= $is_kek ? 'badge-kek-risk' : 'badge-kek-normal' ?>" style="font-size: 0.82rem; padding: 6px 14px; font-weight: 700;">
+                    <?= $is_kek ? 'Indikasi KEK: LILA ' . number_format($lila_val, 1) . ' cm (< 23,5 cm)' : 'LILA Normal: ' . number_format($lila_val, 1) . ' cm' ?>
+                </span>
+            <?php else: ?>
+                <span class="badge badge-secondary" style="font-size: 0.82rem; padding: 6px 14px; font-weight: 700;">
+                    LILA: Belum Tercatat
+                </span>
+            <?php endif; ?>
         </div>
 
         <h1 style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; line-height: 1.25; letter-spacing: -0.02em;">
@@ -62,7 +69,7 @@ $is_kek = $lila_val < 23.5;
                         <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 4px 0 12px 0;">
                             Pengukuran Lingkar Lengan Atas (LILA)
                         </h3>
-                        <div data-medical-chart="lila-gauge" data-lila="<?= $lila_val ?>"></div>
+                        <div id="lila-gauge-detail" data-medical-chart="lila-gauge" data-lila="<?= $lila_val ?>"></div>
                     </div>
                     <div style="background: #f8fafc; border-radius: 12px; padding: 10px 12px; margin-top: 14px; font-size: 0.74rem; color: #64748b; text-align: left; line-height: 1.45;">
                         <strong>Catatan Klinis:</strong> Ibu hamil dengan LILA &lt; 23,5 cm berada pada risiko tinggi melahirkan bayi berat lahir rendah (BBLR) dan stunting. Paket pangan ini ditargetkan untuk intervensi gizi mendesak.
@@ -78,7 +85,7 @@ $is_kek = $lila_val < 23.5;
                         <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 4px 0 12px 0;">
                             Indeks 5 Sumbu Nutrisi Pangan
                         </h3>
-                        <div data-medical-chart="nutrition-radar" data-food-text="<?= htmlspecialchars($need['food_items_needed']) ?>"></div>
+                        <div id="nutrition-radar-detail" data-medical-chart="nutrition-radar" data-food-text="<?= htmlspecialchars($need['food_items_needed']) ?>"></div>
                     </div>
                     <div style="background: #f8fafc; border-radius: 12px; padding: 10px 12px; margin-top: 14px; font-size: 0.74rem; color: #64748b; text-align: left; line-height: 1.45;">
                         <strong>Pemetaan AKG:</strong> Menilai keseimbangan protein hewani, kalsium, energi kalori, asam folat, dan zat besi (Fe) yang terkandung dalam paket bahan pangan yang diajukan.
@@ -142,7 +149,12 @@ $is_kek = $lila_val < 23.5;
 
                     <div class="card-dark-3d" style="padding: 24px; margin-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 1.2rem;">⏱️</span>
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(199, 242, 43, 0.15); display: flex; align-items: center; justify-content: center; color: #c7f22b; flex-shrink: 0;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
                             <h3 style="font-size: 1.05rem; font-weight: 800; margin: 0; color: #c7f22b;">
                                 Komitmen Waktu 48 Jam
                             </h3>

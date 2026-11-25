@@ -1,14 +1,14 @@
 /**
- * Nurtura Medical Charts - 100% Self-Contained & Offline-Ready
- * Clinical SVG/Canvas Engine for Maternal & Infant Nutrition
- * Standards: Kemenkes RI Standard (LILA Threshold 23.5 cm & AKG Bumil)
+ * Nurtura Medical Visualizations & Clinical Charts Module
+ * 100% Offline-Ready & Self-Contained SVG/Canvas Medical Chart Engine
+ * Standards: Kementerian Kesehatan RI (Standar Antropometri Ibu Hamil & AKG Klinis)
  */
 
 (function (window, document) {
     'use strict';
 
     const MedicalCharts = {
-        // Clinical Guidelines
+        // Clinical Standards (Kemenkes RI)
         KEK_THRESHOLD: 23.5,
         LILA_MIN: 15.0,
         LILA_MAX: 35.0,
@@ -22,7 +22,8 @@
         ],
 
         /**
-         * Render Semi-Circular Clinical LILA Gauge (Pure SVG)
+         * Render Semi-Circular Clinical LILA Gauge (Pure 3D SVG)
+         * Maps arm circumference against the 23.5 cm KEK threshold
          */
         renderLilaGauge: function (container, options) {
             if (typeof container === 'string') {
@@ -31,27 +32,35 @@
             if (!container) return;
 
             options = options || {};
-            const val = parseFloat(options.value !== undefined ? options.value : (container.getAttribute('data-lila') || 23.5));
+            const rawVal = options.value !== undefined ? options.value : (container.getAttribute('data-lila') || 23.5);
+            const val = parseFloat(rawVal) || 0;
             const min = parseFloat(options.min || this.LILA_MIN);
             const max = parseFloat(options.max || this.LILA_MAX);
             const threshold = parseFloat(options.threshold || this.KEK_THRESHOLD);
-            const isKek = val < threshold;
-            const statusText = isKek ? 'Risiko KEK (< 23.5 cm)' : 'Normal / Aman (≥ 23.5 cm)';
-            const statusClass = isKek ? 'badge-kek-risk' : 'badge-kek-normal';
+
+            const isKek = val > 0 && val < threshold;
+            const statusText = val <= 0 ? 'Belum Ada Data' : (isKek ? 'Risiko KEK (< 23.5 cm)' : 'Normal / Aman (≥ 23.5 cm)');
+            const statusClass = val <= 0 ? 'badge-secondary' : (isKek ? 'badge-kek-risk' : 'badge-kek-normal');
             const theme = options.theme || container.getAttribute('data-theme') || 'light';
             const isDark = theme === 'dark';
 
             const width = options.width || 300;
-            const height = options.height || 190;
+            const height = options.height || 185;
             const cx = width / 2;
-            const cy = height - 38;
+            const cy = height - 35;
             const r = Math.min(width * 0.42, 115);
             const strokeWidth = 18;
 
-            // Math angles: 180 deg (left) to 360 deg (right)
-            const clampedVal = Math.max(min, Math.min(max, val));
+            // Clamped value for calculation
+            const clampedVal = Math.max(min, Math.min(max, val > 0 ? val : threshold));
             const ratio = (clampedVal - min) / (max - min);
-            const targetAngleDeg = 180 + ratio * 180;
+
+            // Needle rotation angle:
+            // Needle is drawn pointing straight UP (12 o'clock).
+            // Rotation is: -90 deg (9 o'clock / min 15 cm) to +90 deg (3 o'clock / max 35 cm).
+            const targetAngleDeg = -90 + (ratio * 180);
+
+            // Arc angles (180 deg = left/9 o'clock, 270 deg = top/12 o'clock, 360 deg = right/3 o'clock)
             const thresholdRatio = (threshold - min) / (max - min);
             const thresholdAngleDeg = 180 + thresholdRatio * 180;
 
@@ -67,33 +76,28 @@
                 const start = polarToCartesian(x, y, radius, startAngle);
                 const end = polarToCartesian(x, y, radius, endAngle);
                 const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-                return ['M', start.x, start.y, 'A', radius, radius, 0, largeArcFlag, 1, end.x, end.y].join(' ');
+                return ['M', start.x.toFixed(2), start.y.toFixed(2), 'A', radius, radius, 0, largeArcFlag, 1, end.x.toFixed(2), end.y.toFixed(2)].join(' ');
             }
 
             const dangerArcPath = describeArc(cx, cy, r, 180, thresholdAngleDeg);
             const safeArcPath = describeArc(cx, cy, r, thresholdAngleDeg, 360);
             const trackPath = describeArc(cx, cy, r, 180, 360);
 
-            // Coordinates for threshold indicator tick
+            // Coordinates for threshold indicator tick (at 23.5 cm)
             const threshPointInner = polarToCartesian(cx, cy, r - strokeWidth / 2 - 3, thresholdAngleDeg);
             const threshPointOuter = polarToCartesian(cx, cy, r + strokeWidth / 2 + 5, thresholdAngleDeg);
 
-            // Generate unique IDs for SVG defs to avoid collisions
+            // Generate unique ID for SVG filters
             const uid = 'lila_' + Math.random().toString(36).substr(2, 9);
 
             container.innerHTML = `
                 <div class="medical-gauge-wrapper ${isDark ? 'dark-mode' : ''}" style="position: relative; text-align: center; max-width: ${width}px; margin: 0 auto;">
-                    <svg viewBox="0 0 ${width} ${height}" class="medical-gauge-svg" style="width: 100%; height: auto; overflow: visible;" role="img" aria-label="Grafik Gauge LILA: ${val.toFixed(1)} cm">
+                    <svg viewBox="0 0 ${width} ${height}" class="medical-gauge-svg" style="width: 100%; height: auto; overflow: visible;" role="img" aria-label="Grafik Gauge LILA: ${val > 0 ? val.toFixed(1) : '-'} cm">
                         <defs>
-                            <!-- 3D Drop Shadow Filter -->
+                            <!-- 3D Drop Shadow & Glow Filters -->
                             <filter id="${uid}_shadow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(15, 23, 42, 0.25)" />
+                                <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(15, 23, 42, 0.25)" />
                             </filter>
-                            <filter id="${uid}_glow" x="-30%" y="-30%" width="160%" height="160%">
-                                <feGaussianBlur stdDeviation="3" result="blur" />
-                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                            </filter>
-                            <!-- Linear Gradients -->
                             <linearGradient id="${uid}_dangerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" stop-color="#ef4444" />
                                 <stop offset="100%" stop-color="#f97316" />
@@ -109,7 +113,7 @@
                             </linearGradient>
                         </defs>
 
-                        <!-- Track Background (3D Inset Groove) -->
+                        <!-- Track Background -->
                         <path d="${trackPath}" fill="none" stroke="${isDark ? '#334155' : '#e2e8f0'}" stroke-width="${strokeWidth + 2}" stroke-linecap="round" />
 
                         <!-- Zone 1: Risiko KEK (< 23.5 cm) -->
@@ -119,15 +123,15 @@
                         <path d="${safeArcPath}" fill="none" stroke="url(#${uid}_safeGrad)" stroke-width="${strokeWidth}" stroke-linecap="round" filter="url(#${uid}_shadow)" />
 
                         <!-- Ambang Batas 23.5 cm Tick -->
-                        <line x1="${threshPointInner.x}" y1="${threshPointInner.y}" x2="${threshPointOuter.x}" y2="${threshPointOuter.y}" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+                        <line x1="${threshPointInner.x.toFixed(1)}" y1="${threshPointInner.y.toFixed(1)}" x2="${threshPointOuter.x.toFixed(1)}" y2="${threshPointOuter.y.toFixed(1)}" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
 
                         <!-- Scale Numbers -->
-                        <text x="${cx - r - 8}" y="${cy + 18}" text-anchor="middle" font-size="10" font-weight="700" fill="${isDark ? '#94a3b8' : '#64748b'}">15 cm</text>
-                        <text x="${threshPointOuter.x}" y="${threshPointOuter.y - 8}" text-anchor="middle" font-size="9" font-weight="800" fill="#f59e0b">23.5</text>
-                        <text x="${cx + r + 8}" y="${cy + 18}" text-anchor="middle" font-size="10" font-weight="700" fill="${isDark ? '#94a3b8' : '#64748b'}">35 cm</text>
+                        <text x="${cx - r - 6}" y="${cy + 18}" text-anchor="middle" font-size="10" font-weight="700" fill="${isDark ? '#94a3b8' : '#64748b'}">15 cm</text>
+                        <text x="${threshPointOuter.x.toFixed(1)}" y="${(threshPointOuter.y - 7).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="800" fill="#f59e0b">23.5</text>
+                        <text x="${cx + r + 6}" y="${cy + 18}" text-anchor="middle" font-size="10" font-weight="700" fill="${isDark ? '#94a3b8' : '#64748b'}">35 cm</text>
 
-                        <!-- 3D Dynamic Needle Group -->
-                        <g id="${uid}_needle_group" style="transform-origin: ${cx}px ${cy}px; transform: rotate(180deg); transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);">
+                        <!-- 3D Dynamic Needle Group (Rotates around cx, cy) -->
+                        <g id="${uid}_needle_group" transform="rotate(${targetAngleDeg}, ${cx}, ${cy})" style="transform-box: view-box; transform-origin: ${cx}px ${cy}px; transform: rotate(${targetAngleDeg}deg); transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);">
                             <!-- Needle Shadow -->
                             <polygon points="${cx - 4},${cy} ${cx + 4},${cy} ${cx},${cy - r + 10}" fill="rgba(15, 23, 42, 0.3)" filter="url(#${uid}_shadow)" />
                             <!-- Needle Body -->
@@ -140,10 +144,10 @@
                     </svg>
 
                     <!-- Center Clinical Readout -->
-                    <div class="medical-gauge-readout" style="margin-top: -12px;">
+                    <div class="medical-gauge-readout" style="margin-top: -10px;">
                         <div style="display: flex; align-items: baseline; justify-content: center; gap: 4px;">
                             <span style="font-size: 1.85rem; font-weight: 800; color: ${isDark ? '#f8fafc' : '#0f172a'}; letter-spacing: -0.02em;">
-                                ${val.toFixed(1)}
+                                ${val > 0 ? val.toFixed(1) : '-'}
                             </span>
                             <span style="font-size: 0.85rem; font-weight: 600; color: ${isDark ? '#94a3b8' : '#64748b'};">cm</span>
                         </div>
@@ -158,58 +162,53 @@
                     </div>
                 </div>
             `;
-
-            // Trigger needle rotation animation
-            setTimeout(function () {
-                const needle = document.getElementById(uid + '_needle_group');
-                if (needle) {
-                    needle.style.transform = `rotate(${targetAngleDeg}deg)`;
-                }
-            }, 60);
         },
 
         /**
          * Intelligent Food Keyword Analyzer
-         * Parses indonesian text into 5 nutritional scores (0-100)
+         * Parses Indonesian food text into 5 nutritional scores (% AKG Bumil)
          */
         analyzeFoodItems: function (text) {
-            text = (text || '').toLowerCase();
+            text = (text || '').toLowerCase().trim();
 
-            // Default balanced base scores
+            if (!text) {
+                return [50, 45, 55, 40, 45]; // Balanced base scores
+            }
+
             let scores = {
-                protein: 50,
-                kalsium: 45,
-                kalori: 55,
-                folat: 40,
-                besi: 45
+                protein: 42,
+                kalsium: 40,
+                kalori: 48,
+                folat: 38,
+                besi: 40
             };
 
             // Protein Hewani keywords
-            if (/(telur|telor|ayam|daging|sapi|ikan|lele|tuna|tongkol|salmon|udang|hati\s*ayam|protein\s*hewani)/.test(text)) {
-                scores.protein += 42;
+            if (/(telur|telor|ayam|daging|sapi|ikan|lele|tuna|tongkol|salmon|udang|kembung|mujair|patin|bebek|belut|hati\s*ayam|protein\s*hewani)/.test(text)) {
+                scores.protein += 45;
                 scores.besi += 20;
             }
             // Kalsium & Susu keywords
-            if (/(susu|lactamil|prenagen|sgm|keju|yoghurt|yogurt|teri|kalsium|kedelai)/.test(text)) {
-                scores.kalsium += 45;
-                scores.kalori += 15;
+            if (/(susu|lactamil|prenagen|sgm|keju|yoghurt|yogurt|teri|rebon|kalsium|kedelai|tahu|tempe)/.test(text)) {
+                scores.kalsium += 46;
+                scores.kalori += 16;
             }
-            // Kalori & Karbohidrat keywords
-            if (/(beras|nasi|kentang|ubi|umbi|jagung|oat|roti|madu|biskuit|kalori|minyak)/.test(text)) {
+            // Kalori & Karbohidrat seimbang keywords
+            if (/(beras|nasi|kentang|ubi|umbi|singkong|jagung|havermut|oat|roti|madu|biskuit|kalori|minyak)/.test(text)) {
                 scores.kalori += 38;
             }
             // Asam Folat keywords
-            if (/(folat|asam\s*folat|bayam|brokoli|kacang\s*hijau|alpukat|jeruk|pisang|sayuran\s*hijau|sayur)/.test(text)) {
+            if (/(folat|asam\s*folat|bayam|brokoli|kacang\s*hijau|alpukat|jeruk|pisang|sayuran\s*hijau|katuk|kelor|daun\s*kelor|sawi|sayur)/.test(text)) {
                 scores.folat += 46;
-                scores.besi += 15;
+                scores.besi += 16;
             }
             // Zat Besi (Fe) keywords
-            if (/(zat\s*besi|fe|tablet\s*tambah\s*darah|ttd|hati|bayam|daging\s*merah|kangkung|darah)/.test(text)) {
+            if (/(zat\s*besi|fe|tablet\s*tambah\s*darah|ttd|hati|bayam|daging\s*merah|kangkung|darah|kelor)/.test(text)) {
                 scores.besi += 45;
                 scores.protein += 15;
             }
 
-            // Clamp scores between 30 and 96
+            // Clamp scores between 30% and 96% AKG
             return [
                 Math.min(96, Math.max(30, scores.protein)),
                 Math.min(96, Math.max(30, scores.kalsium)),
@@ -219,8 +218,21 @@
             ];
         },
 
+        // Backward compatibility alias
+        calculateScoresFromText: function (text) {
+            const arr = this.analyzeFoodItems(text);
+            return {
+                protein: arr[0],
+                kalsium: arr[1],
+                kalori: arr[2],
+                folat: arr[3],
+                besi: arr[4]
+            };
+        },
+
         /**
-         * Render 5-Axis Nutritional Radar Chart (Pure SVG)
+         * Render 5-Axis Nutritional Radar Chart (Pure 3D SVG)
+         * Generates a fully enclosed radar chart where labels never clip
          */
         renderNutritionRadar: function (container, options) {
             if (typeof container === 'string') {
@@ -239,17 +251,20 @@
                 } else if (foodText) {
                     values = this.analyzeFoodItems(foodText);
                 } else {
-                    values = [85, 75, 70, 80, 78]; // default rich prenatal nutritional package
+                    values = [88, 85, 75, 82, 80]; // default rich prenatal nutritional package
                 }
             }
 
             const theme = options.theme || container.getAttribute('data-theme') || 'light';
             const isDark = theme === 'dark';
-            const size = options.size || Math.min(container.clientWidth || 340, 360);
-            const cx = size / 2;
-            const cy = size / 2;
-            const r = size * 0.35;
+            const size = options.size || 340;
             const uid = 'radar_' + Math.random().toString(36).substr(2, 9);
+
+            // Canvas & geometry dimensions:
+            // Centered layout with generous margins for labels
+            const cx = 180;
+            const cy = 185;
+            const r = 95; // Radius of 100% AKG web ring
 
             // 5 Axes Angles: Start at -90 deg (Top), step 72 deg
             const numAxes = 5;
@@ -264,8 +279,8 @@
                 };
             }
 
-            // Generate Concentric Web Rings (20%, 40%, 60%, 80%, 100%)
-            const levels = [0.2, 0.4, 0.6, 0.8, 1.0];
+            // Concentric Web Rings (25%, 50%, 75%, 100%)
+            const levels = [0.25, 0.5, 0.75, 1.0];
             let gridPolygons = '';
             levels.forEach(function (level) {
                 let pts = [];
@@ -277,29 +292,58 @@
                 gridPolygons += `<polygon points="${pts.join(' ')}" fill="none" stroke="${isDark ? '#334155' : '#e2e8f0'}" stroke-width="${isOuter ? '1.5' : '1'}" stroke-dasharray="${isOuter ? 'none' : '3,3'}" />`;
             });
 
-            // Generate Axis Spokes
+            // Axis Spokes & Labels
             let spokes = '';
             let labelElements = '';
             for (let i = 0; i < numAxes; i++) {
                 const outer = getPoint(i, 1.0);
-                const labelPos = getPoint(i, 1.25);
                 const axisDef = MedicalCharts.RADAR_AXES[i];
                 const score = values[i];
 
-                spokes += `<line x1="${cx}" y1="${cy}" x2="${outer.x.toFixed(1)}" y2="${outer.y.toFixed(1)}" stroke="${isDark ? '#475569' : '#cbd5e1'}" stroke-width="1" />`;
+                spokes += `<line x1="${cx}" y1="${cy}" x2="${outer.x.toFixed(1)}" y2="${outer.y.toFixed(1)}" stroke="${isDark ? '#475569' : '#cbd5e1'}" stroke-width="1.2" />`;
 
-                // Calculate label positioning adjustments
+                // Calculate label coordinates with proper margin
+                const labelPos = getPoint(i, 1.28);
                 let textAnchor = 'middle';
-                if (labelPos.x < cx - 10) textAnchor = 'end';
-                else if (labelPos.x > cx + 10) textAnchor = 'start';
+                let xOffset = 0;
+                let yOffset = 0;
+
+                if (i === 0) {
+                    // Top (Protein Hewani)
+                    textAnchor = 'middle';
+                    yOffset = -8;
+                } else if (i === 1) {
+                    // Top-Right (Kalsium)
+                    textAnchor = 'start';
+                    xOffset = 6;
+                    yOffset = -2;
+                } else if (i === 2) {
+                    // Bottom-Right (Kalori & Energi)
+                    textAnchor = 'start';
+                    xOffset = 6;
+                    yOffset = 10;
+                } else if (i === 3) {
+                    // Bottom-Left (Asam Folat)
+                    textAnchor = 'end';
+                    xOffset = -6;
+                    yOffset = 10;
+                } else if (i === 4) {
+                    // Top-Left (Zat Besi)
+                    textAnchor = 'end';
+                    xOffset = -6;
+                    yOffset = -2;
+                }
+
+                const lx = labelPos.x + xOffset;
+                const ly = labelPos.y + yOffset;
 
                 labelElements += `
                     <g class="radar-axis-label" style="cursor: pointer;">
                         <title>${axisDef.label}: ${score}% AKG (${axisDef.desc})</title>
-                        <text x="${labelPos.x.toFixed(1)}" y="${(labelPos.y - 4).toFixed(1)}" text-anchor="${textAnchor}" font-size="11" font-weight="700" fill="${isDark ? '#f8fafc' : '#0f172a'}">
+                        <text x="${lx.toFixed(1)}" y="${(ly - 4).toFixed(1)}" text-anchor="${textAnchor}" font-size="10.5" font-weight="700" fill="${isDark ? '#f8fafc' : '#0f172a'}">
                             ${axisDef.icon} ${axisDef.label}
                         </text>
-                        <text x="${labelPos.x.toFixed(1)}" y="${(labelPos.y + 11).toFixed(1)}" text-anchor="${textAnchor}" font-size="10" font-weight="800" fill="#0284c7">
+                        <text x="${lx.toFixed(1)}" y="${(ly + 10).toFixed(1)}" text-anchor="${textAnchor}" font-size="9.5" font-weight="800" fill="#0284c7">
                             ${score}% AKG
                         </text>
                     </g>
@@ -328,17 +372,17 @@
             }
 
             container.innerHTML = `
-                <div class="medical-radar-card ${isDark ? 'dark-mode' : ''}" style="position: relative; text-align: center; max-width: ${size + 40}px; margin: 0 auto;">
+                <div class="medical-radar-card ${isDark ? 'dark-mode' : ''}" style="position: relative; text-align: center; max-width: ${size + 40}px; margin: 0 auto; overflow: visible;">
                     <div style="margin-bottom: 8px;">
                         <span class="badge badge-info" style="font-size: 0.72rem; padding: 4px 12px; font-weight: 700; border-radius: 9999px;">
                             Indeks 5 Sumbu Nutrisi Pangan Bumil
                         </span>
                     </div>
 
-                    <svg viewBox="0 0 ${size} ${size}" class="medical-radar-svg" style="width: 100%; height: auto; overflow: visible;" role="img" aria-label="Diagram Radar Nutrisi 5 Sumbu">
+                    <svg viewBox="-70 -15 500 395" class="medical-radar-svg" style="width: 100%; height: auto; max-width: 100%; overflow: visible;" role="img" aria-label="Diagram Radar Nutrisi 5 Sumbu">
                         <defs>
                             <filter id="${uid}_drop" x="-20%" y="-20%" width="140%" height="140%">
-                                <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="rgba(2, 132, 199, 0.35)" />
+                                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(2, 132, 199, 0.35)" />
                             </filter>
                             <linearGradient id="${uid}_fillGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stop-color="#0284c7" stop-opacity="0.45" />
@@ -380,9 +424,28 @@
             `;
         },
 
+        // Backward compatibility alias
+        renderNutritionalRadar: function (container, scores) {
+            let values;
+            if (scores && typeof scores === 'object') {
+                if (Array.isArray(scores)) {
+                    values = scores;
+                } else {
+                    values = [
+                        scores.protein || 85,
+                        scores.kalsium || 80,
+                        scores.kalori || 75,
+                        scores.folat || 85,
+                        scores.besi || 80
+                    ];
+                }
+            }
+            this.renderNutritionRadar(container, { values: values });
+        },
+
         /**
          * Realtime Binder for Create Need Form
-         * Connects the textarea input to the live mini radar chart
+         * Connects the food textarea to the live mini radar chart
          */
         bindLiveNutritionalPreview: function (textareaId, radarContainerId) {
             const textarea = document.getElementById(textareaId);
@@ -390,7 +453,7 @@
             if (!textarea || !radarContainer) return;
 
             let debounceTimer = null;
-            function update() {
+            const update = function () {
                 const text = textarea.value;
                 const scores = MedicalCharts.analyzeFoodItems(text);
                 MedicalCharts.renderNutritionRadar(radarContainer, {
@@ -398,11 +461,11 @@
                     foodText: text,
                     size: 280
                 });
-            }
+            };
 
             textarea.addEventListener('input', function () {
                 clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(update, 250);
+                debounceTimer = setTimeout(update, 200);
             });
 
             // Initial render
@@ -410,17 +473,18 @@
         },
 
         /**
-         * Initialize all charts automatically based on DOM attributes
+         * Initialize all clinical charts safely based on explicit DOM attributes
+         * (Guaranteed to NEVER target generic cards or filter attributes!)
          */
         init: function () {
-            // Find all LILA Gauges
-            const lilaGauges = document.querySelectorAll('[data-medical-chart="lila-gauge"]');
+            // 1. Explicit LILA Gauges
+            const lilaGauges = document.querySelectorAll('[data-medical-chart="lila-gauge"], [data-lila-gauge]');
             lilaGauges.forEach(function (el) {
                 MedicalCharts.renderLilaGauge(el);
             });
 
-            // Find all Nutrition Radars
-            const nutritionRadars = document.querySelectorAll('[data-medical-chart="nutrition-radar"]');
+            // 2. Explicit Nutrition Radars
+            const nutritionRadars = document.querySelectorAll('[data-medical-chart="nutrition-radar"], [data-nutritional-radar]');
             nutritionRadars.forEach(function (el) {
                 MedicalCharts.renderNutritionRadar(el);
             });
@@ -436,7 +500,8 @@
         MedicalCharts.init();
     }
 
-    // Export to global scope
+    // Export both MedicalCharts and NurturaCharts globally
     window.MedicalCharts = MedicalCharts;
+    window.NurturaCharts = MedicalCharts;
 
 })(window, document);

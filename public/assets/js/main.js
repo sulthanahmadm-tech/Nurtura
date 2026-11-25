@@ -28,7 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const targetTime = new Date(expiresAtStr).getTime();
         const parentPill = el.closest('.countdown-pill');
-        const progressBar = el.closest('.card')?.querySelector('.countdown-progress-bar');
+        const cardParent = el.closest('.card, .card-modern, .card-dark-3d');
+        const progressBar = cardParent ? cardParent.querySelector('.countdown-progress-bar') : null;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -79,63 +80,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-function openProofModal(needId) {
-        const modal = document.getElementById(
-            'proof-modal-' + needId
-        );
+window.openProofModal = function (needId) {
+    const modal = document.getElementById('proof-modal-' + needId);
+    const image = document.getElementById('proof-image-' + needId);
+    const loading = document.getElementById('proof-loading-' + needId);
+    if (!modal || !image || !loading) return;
 
-        const image = document.getElementById(
-            'proof-image-' + needId
-        );
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+    image.style.display = 'none';
+    loading.textContent = 'Memuat foto bukti bantuan...';
+    loading.style.display = 'block';
 
-        const loading = document.getElementById(
-            'proof-loading-' + needId
-        );
+    image.onload = function () {
+        image.style.display = 'block';
+        loading.style.display = 'none';
+    };
 
-        if (!modal || !image || !loading) return;
-
-        modal.style.display = 'flex';
+    image.onerror = function () {
         image.style.display = 'none';
-        loading.textContent = 'Memuat foto bukti bantuan...';
+        loading.textContent = 'Foto bukti bantuan belum tersedia atau gagal dimuat.';
         loading.style.display = 'block';
+    };
 
-        image.onload = function () {
-            image.style.display = 'block';
-            loading.style.display = 'none';
-        };
+    image.src = 'index.php?action=view-proof&need_id=' + encodeURIComponent(needId);
+};
 
-        image.onerror = function () {
-            image.style.display = 'none';
-            loading.textContent =
-                'Foto bukti tidak ditemukan atau gagal dimuat.';
-            loading.style.display = 'block';
-        };
-
-        image.src =
-            'index.php?action=view-proof&need_id=' +
-            encodeURIComponent(needId);
+window.closeProofModal = function (needId) {
+    const modal = document.getElementById('proof-modal-' + needId);
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
     }
+};
 
-    function closeProofModal(needId) {
-        const modal = document.getElementById(
-            'proof-modal-' + needId
-        );
-
-        if (modal) {
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.proof-modal').forEach(function (modal) {
+            modal.classList.remove('active');
             modal.style.display = 'none';
+        });
+        if (typeof window.closeKiaInspector === 'function') {
+            window.closeKiaInspector();
         }
     }
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            document.querySelectorAll('.proof-modal').forEach(
-                function (modal) {
-                    modal.style.display = 'none';
-                }
-            );
-            closeKiaInspector();
-        }
-    });
+});
 
     // 4. Modal Inspeksi Buku KIA (Zoom & Rotate untuk Admin)
     let currentZoom = 1;
