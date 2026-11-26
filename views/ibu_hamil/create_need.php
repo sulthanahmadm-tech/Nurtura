@@ -3,36 +3,50 @@ require_once __DIR__ . '/../layouts/header.php';
 require_once __DIR__ . '/../../app/helpers/auth_helper.php';
 ?>
 <style>
-/* Nurtura - form pengajuan ibu hamil (scope: halaman ini saja) */
-.need-form-page{max-width:920px;margin:0 auto;color:#17223b}
-.need-form-page .form-intro{display:flex;align-items:flex-start;gap:14px;margin:4px 0 20px}
-.need-form-page .intro-icon{display:grid;place-items:center;flex:0 0 48px;height:48px;border-radius:15px;background:#e0f3ff;font-size:1.45rem}
-.need-form-page h1{font-size:clamp(1.4rem,3vw,1.9rem);line-height:1.25;margin:8px 0 7px;font-weight:800}
-.need-form-page .muted{color:#64748b}
-.need-form-page .form-shell{background:#fff;border:1px solid #dceaf4;border-radius:24px;padding:clamp(20px,3vw,34px);box-shadow:0 12px 32px #16456b0d}
-.need-form-page .form-section{padding:22px 0;border-top:1px solid #e8f0f6}
-.need-form-page .form-section:first-of-type{border-top:0;padding-top:8px}
-.need-form-page .section-title{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.need-form-page .section-number{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#e0f3ff;color:#0878b8;font-size:.82rem;font-weight:800}
-.need-form-page .section-title h2{font-size:1.05rem;font-weight:800;margin:0;color:#0f172a}
-.need-form-page .form-group{margin-bottom:18px}
-.need-form-page .form-group label{font-weight:700;color:#1e293b;margin-bottom:7px;display:block;font-size:0.9rem}
-.need-form-page .form-control{min-height:46px;border:1px solid #d5e2ed;border-radius:12px;background:#fbfdff;padding:11px 14px;font-size:0.92rem;width:100%}
-.need-form-page textarea.form-control{min-height:116px;resize:vertical}
-.need-form-page .form-control:focus{border-color:#0284c7;box-shadow:0 0 0 3px rgba(2, 132, 199, 0.15);outline:none}
-.need-form-page .field-help{display:block;color:#64748b;font-size:.78rem;margin-top:6px;line-height:1.5}
-.need-form-page .upload-box{border:2px dashed #9bcbe5;background:#f4faff;border-radius:16px;padding:20px}
-.need-form-page input[type=file]{padding:10px;background:#fff}
-.need-form-page .privacy-note{display:flex;gap:10px;padding:14px;border-radius:12px;background:#effaf5;color:#176548;font-size:.82rem;line-height:1.55;margin-top:14px}
-.need-form-page .form-actions{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;padding-top:22px;border-top:1px solid #e8f0f6}
-.need-form-page .back-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;color:#0284c7;font-weight:700;text-decoration:none;font-size:0.9rem}
-.need-form-page .back-link:hover{text-decoration:underline}
-@media(max-width:520px){.need-form-page .form-actions{align-items:stretch}.need-form-page .form-actions .btn{width:100%}.need-form-page .intro-icon{flex-basis:42px;height:42px}}
+/* Nurtura Clinical Care - Scoped Form Pengajuan Ibu Hamil (100% rem / vw / %) */
+.need-form-page { max-width: min(57.5rem, 100%); margin: 0 auto; color: var(--text-main); }
+.need-form-page .form-intro { display: flex; align-items: flex-start; gap: 0.875rem; margin: 0.375rem 0 1.375rem 0; }
+.need-form-page .intro-icon {
+    display: grid; place-items: center; flex: 0 0 2.875rem; height: 2.875rem;
+    border-radius: var(--radius-md); background: var(--surface-low); border: 0.0625rem solid var(--border-color); color: var(--primary);
+}
+.need-form-page h1 { font-size: clamp(1.45rem, 4.5vw, 2rem); line-height: 1.25; margin: 0.25rem 0 0.375rem 0; font-weight: 700; }
+.need-form-page .muted { color: var(--text-muted); font-size: 0.92rem; margin: 0; }
+.need-form-page .form-shell {
+    background: var(--surface-lowest); border: 0.0625rem solid var(--border-color);
+    border-radius: var(--radius); padding: clamp(1.125rem, 3vw, 2.125rem);
+}
+.need-form-page .form-section { padding: 1.375rem 0; border-top: 0.0625rem solid var(--border-subtle); }
+.need-form-page .form-section:first-of-type { border-top: 0; padding-top: 0.25rem; }
+.need-form-page .section-title { display: flex; align-items: center; gap: 0.625rem; margin-bottom: 1rem; }
+.need-form-page .section-number {
+    display: grid; place-items: center; width: 1.875rem; height: 1.875rem; border-radius: 50%; flex-shrink: 0;
+    background: var(--surface-low); color: var(--primary); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700;
+}
+.need-form-page .section-title h2 { font-family: var(--font-sans); font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--text-main); }
+.need-form-page textarea.form-control { min-height: 6.875rem; resize: vertical; }
+.need-form-page .field-help { display: block; color: var(--text-muted); font-size: 0.78rem; margin-top: 0.375rem; line-height: 1.5; }
+.need-form-page .upload-box { border: 0.09375rem dashed var(--outline-variant); background: var(--surface-low); border-radius: var(--radius-md); padding: 1.25rem; }
+.need-form-page .privacy-note {
+    display: flex; gap: 0.625rem; padding: 0.875rem; border-radius: var(--radius-sm);
+    background: var(--surface-lowest); border-left: 0.1875rem solid var(--botanical); color: var(--text-main); font-size: 0.84rem; line-height: 1.55; margin-top: 0.875rem;
+}
+.need-form-page .form-actions {
+    display: flex; justify-content: space-between; gap: 0.875rem; align-items: center;
+    flex-wrap: wrap; padding-top: 1.375rem; border-top: 0.0625rem solid var(--border-subtle);
+}
+.need-form-page .back-link {
+    display: inline-flex; align-items: center; gap: 0.375rem; min-height: var(--touch-target); margin-bottom: 0.75rem; color: var(--primary); font-weight: 600; font-size: 0.9rem;
+}
+@media (max-width: 32.5rem) {
+    .need-form-page .form-actions { align-items: stretch; }
+    .need-form-page .form-actions a, .need-form-page .form-actions button { width: 100%; }
+}
 </style>
 
 <div class="need-form-page">
     <a href="index.php?page=ibu-hamil-dashboard" class="back-link">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
@@ -40,14 +54,18 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
     </a>
 
     <div class="form-intro">
-        <div class="intro-icon" aria-hidden="true" style="color: #0284c7;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2z"></path>
-                <path d="M12 6v6l4 2"></path>
+        <div class="intro-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="12" y1="18" x2="12" y2="12"/>
+                <line x1="9" y1="15" x2="15" y2="15"/>
             </svg>
         </div>
         <div>
-            <span class="badge badge-info">NurturaNeeds · Pengajuan Ibu Hamil</span>
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">
+                NurturaNeeds · Pengajuan Ibu Hamil
+            </span>
             <h1>Ajukan Kebutuhan Pangan Bergizi</h1>
             <p class="muted">Lengkapi informasi berikut agar tim NurturaGuard dapat meninjau kebutuhan Anda berdasarkan data Buku KIA.</p>
         </div>
@@ -65,7 +83,7 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
             <section class="form-section">
                 <div class="section-title">
                     <span class="section-number">01</span>
-                    <h2>Informasi Kebutuhan Pangan & Gizi</h2>
+                    <h2>Informasi Kebutuhan Pangan &amp; Gizi</h2>
                 </div>
 
                 <div class="form-group">
@@ -81,25 +99,25 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                 </div>
 
                 <!-- Live Mini 5-Axis Nutritional Radar Preview -->
-                <div class="card-3d-tactile" style="padding: 20px; background: #f8fafc; margin-top: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                <div class="inset-well" style="padding: 1.125rem; margin-top: 0.875rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.375rem; flex-wrap: wrap; gap: 0.5rem;">
                         <div>
-                            <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #0284c7;">
+                            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary);">
                                 Indeks Nutrisi Terpadu
                             </span>
-                            <h3 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0;">
+                            <h3 style="font-size: 0.96rem; font-weight: 700; color: var(--text-main); margin: 0;">
                                 Pratinjau Keseimbangan 5 Sumbu Gizi (AKG Bumil)
                             </h3>
                         </div>
-                        <span class="badge badge-info" style="font-size: 0.7rem;">Live Dynamic Radar</span>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">Live Dynamic Radar</span>
                     </div>
-                    <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 10px;">
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.625rem;">
                         Diagram ini memetakan perkiraan pemenuhan Protein Hewani, Kalsium, Kalori, Asam Folat, dan Zat Besi berdasarkan rincian pangan di atas.
                     </p>
                     <div id="live-nutrition-radar" style="display: flex; justify-content: center; align-items: center;"></div>
                 </div>
 
-                <div class="form-group" style="margin-top: 18px; margin-bottom: 0;">
+                <div class="form-group" style="margin-top: 1.125rem; margin-bottom: 0;">
                     <label for="description">Alasan atau Kondisi Kehamilan Saat Ini</label>
                     <textarea id="description" name="description" class="form-control" rows="3" placeholder="Ceritakan secara singkat kondisi nafsu makan, anjuran bidan/dokter, atau keterbatasan akses pangan yang dihadapi..." required></textarea>
                 </div>
@@ -109,13 +127,13 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
             <section class="form-section">
                 <div class="section-title">
                     <span class="section-number">02</span>
-                    <h2>Data Pemeriksaan & Lokasi Serah Terima</h2>
+                    <h2>Data Pemeriksaan &amp; Lokasi Serah Terima</h2>
                 </div>
 
                 <div class="form-group">
                     <label for="lila_measurement">Lingkar Lengan Atas (LILA) Terakhir (cm)</label>
                     <input type="number" step="0.1" min="10" max="60" id="lila_measurement" name="lila_measurement" class="form-control" value="<?= htmlspecialchars($profile['lila_cm'] ?? '') ?>" placeholder="Contoh: 21.5" required oninput="updateLiveLilaIndicator(this.value)">
-                    <div id="lila-live-indicator" style="margin-top: 8px; font-size: 0.84rem; font-weight: 700; display: none; padding: 10px 14px; border-radius: 10px;"></div>
+                    <div id="lila-live-indicator" style="margin-top: 0.5rem; font-size: 0.84rem; font-weight: 600; display: none; padding: 0.625rem 0.875rem; border-radius: var(--radius-sm); background: var(--surface-low);"></div>
                     <small class="field-help">Masukkan hasil pengukuran terakhir dalam sentimeter. Standar Kemenkes RI: Nilai di bawah 23,5 cm merupakan indikator risiko Kurang Energi Kronis (KEK).</small>
                 </div>
                 <script>
@@ -129,14 +147,12 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                     }
                     el.style.display = 'block';
                     if (num < 23.5) {
-                        el.style.background = '#fef2f2';
-                        el.style.borderLeft = '3px solid #b91c1c';
-                        el.style.color = '#991b1b';
+                        el.style.borderLeft = '0.1875rem solid #A83836';
+                        el.style.color = '#A83836';
                         el.textContent = 'Indikasi Risiko KEK (LILA ' + num.toFixed(1) + ' cm < 23,5 cm) — Memenuhi prioritas intervensi pangan bergizi.';
                     } else {
-                        el.style.background = '#f0fdf4';
-                        el.style.borderLeft = '3px solid #15803d';
-                        el.style.color = '#166534';
+                        el.style.borderLeft = '0.1875rem solid #006D30';
+                        el.style.color = '#006D30';
                         el.textContent = 'Status LILA Normal (' + num.toFixed(1) + ' cm ≥ 23,5 cm) — Tetap jaga asupan protein hewani dan Tablet Tambah Darah.';
                     }
                 }
@@ -174,17 +190,16 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                         <small class="field-help">Format yang diterima: JPG, PNG, atau PDF. Pastikan foto memuat catatan tanggal pemeriksaan dan ukuran LILA secara jelas.</small>
                     </div>
 
-                    <!-- Live Image/PDF Preview Container -->
-                    <div id="kia-preview-container" style="display: none; margin-top: 16px; text-align: center; background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #cbd5e1;">
-                        <span style="font-size: 0.78rem; font-weight: 700; color: #0284c7; display: block; margin-bottom: 8px;">
+                    <div id="kia-preview-container" style="display: none; margin-top: 1rem; text-align: center; background: var(--surface-lowest); padding: 1rem; border-radius: var(--radius-md); border: 0.0625rem solid var(--border-color);">
+                        <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.5rem;">
                             ✓ Pratinjau Dokumen Lembar Buku KIA Terpilih:
                         </span>
-                        <img id="kia-preview-img" src="" alt="Pratinjau Lembar KIA" style="max-height: 240px; max-width: 100%; border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); margin: 0 auto;">
-                        <div id="kia-preview-pdf" style="display: none; padding: 12px; background: #f0f9ff; border-radius: 8px; color: #0369a1; font-size: 0.88rem;"></div>
+                        <img id="kia-preview-img" src="" alt="Pratinjau Lembar KIA" style="max-height: 15rem; max-width: 100%; border-radius: var(--radius-sm); margin: 0 auto;">
+                        <div id="kia-preview-pdf" style="display: none; padding: 0.75rem; background: var(--surface-low); border-radius: var(--radius-sm); color: var(--primary); font-size: 0.88rem;"></div>
                     </div>
 
                     <div class="privacy-note">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#006D30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 0.125rem;" aria-hidden="true">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
@@ -193,12 +208,12 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                 </div>
             </section>
 
-            <!-- FORM ACTIONS DENGAN LIME GREEN CTA BUTTON -->
+            <!-- FORM ACTIONS -->
             <div class="form-actions">
-                <a href="index.php?page=ibu-hamil-dashboard" class="btn btn-secondary">
+                <a href="index.php?page=ibu-hamil-dashboard" class="btn-ghost-clean">
                     Batal
                 </a>
-                <button type="submit" class="btn-lime" style="padding: 14px 30px; font-size: 0.96rem;">
+                <button type="submit" class="btn-cerulean" style="padding: 0.75rem 1.625rem;">
                     Kirim Pengajuan ke NurturaGuard →
                 </button>
             </div>
@@ -207,7 +222,6 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
 </div>
 
 <script>
-    // Live Image/PDF Preview for Buku KIA
     function previewKiaImage(input) {
         const file = input.files && input.files[0];
         const container = document.getElementById('kia-preview-container');
@@ -229,7 +243,7 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
                 img.style.display = 'none';
                 if (pdfNotice) {
                     pdfNotice.style.display = 'block';
-                    pdfNotice.innerHTML = '📄 <strong>Dokumen PDF Terpilih:</strong> ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                    pdfNotice.innerHTML = '<strong>Dokumen PDF Terpilih:</strong> ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
                 }
                 container.style.display = 'block';
             }
@@ -238,7 +252,6 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
         }
     }
 
-    // Bind Live 5-Axis Nutritional Radar Preview
     document.addEventListener('DOMContentLoaded', function () {
         if (window.MedicalCharts && typeof window.MedicalCharts.bindLiveNutritionalPreview === 'function') {
             window.MedicalCharts.bindLiveNutritionalPreview('food_items_needed', 'live-nutrition-radar');
