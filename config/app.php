@@ -9,8 +9,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 define('APP_NAME', 'Nurtura');
-define('APP_TAGLINE', 'Nurturing Mothers, Nourishing Futures');
-define('BASE_URL', '/Nurtura/public');
 
 // Timer Configuration
 define('LOCK_TIMEOUT_HOURS', 48);     // Donatur Ghosting Auto-Release Timeout

@@ -63,13 +63,13 @@ class Donation {
         return $stmt->fetchAll();
     }
 
-    public static function upload_proof($donation_id, $proof_filename, $donor_notes = null) {
+    public static function upload_proof($donation_id, $donor_user_id, $proof_filename, $donor_notes = null) {
         $pdo = get_db_connection();
         $pdo->beginTransaction();
         try {
-            // Ambil need_id dari donation
-            $stmtGet = $pdo->prepare("SELECT need_id FROM donations WHERE id = :id");
-            $stmtGet->execute([':id' => $donation_id]);
+            // Verifikasi kepemilikan donasi & status komitmen aktif (mencegah IDOR)
+            $stmtGet = $pdo->prepare("SELECT need_id FROM donations WHERE id = :id AND donor_user_id = :donor_id AND status = 'committed' FOR UPDATE");
+            $stmtGet->execute([':id' => $donation_id, ':donor_id' => $donor_user_id]);
             $don = $stmtGet->fetch();
             if (!$don) {
                 $pdo->rollBack();
@@ -131,6 +131,14 @@ class Donation {
         $pdo = get_db_connection();
         $pdo->beginTransaction();
         try {
+            // Verifikasi bahwa pengajuan milik ibu hamil pelapor dan berstatus menunggu_pengambilan
+            $stmtCheck = $pdo->prepare("SELECT id FROM needs WHERE id = :need_id AND user_id = :user_id AND status = 'menunggu_pengambilan' FOR UPDATE");
+            $stmtCheck->execute([':need_id' => $need_id, ':user_id' => $reporter_user_id]);
+            if (!$stmtCheck->fetch()) {
+                $pdo->rollBack();
+                return false;
+            }
+
             $stmtDisp = $pdo->prepare("
                 INSERT INTO disputes (need_id, reporter_user_id, reason, status)
                 VALUES (:need_id, :reporter_user_id, :reason, 'open')

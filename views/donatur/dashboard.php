@@ -8,9 +8,8 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
     <!-- Header Panel Donatur -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span class="badge badge-info">NurturaGive · Panel Donatur</span>
-                <span class="badge badge-secondary">Sistem Drop-Point Faskes</span>
+            <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #0284c7; margin-bottom: 6px;">
+                NurturaGive · Panel Donatur · Sistem Drop-Point Faskes
             </div>
             <h1 style="font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; letter-spacing: -0.02em;">
                 Komitmen & Penyaluran Paket Pangan

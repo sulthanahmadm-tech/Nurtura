@@ -43,17 +43,19 @@ function run_lifecycle_checks() {
         }
     }
 
-    // 2. AUTO-COMPLETE (72 Jam):
-    // Jika donatur sudah upload bukti paket di posyandu, dan 72 jam berlalu tanpa dispute, selesaikan otomatis
+    // 2. AUTO-COMPLETE (72 Jam sesuai konstanta AUTO_CONFIRM_HOURS):
+    // Jika donatur sudah upload bukti paket di posyandu, dan batas jam berlalu tanpa dispute, selesaikan otomatis
+    $autoConfirmHours = defined('AUTO_CONFIRM_HOURS') ? (int)AUTO_CONFIRM_HOURS : 72;
     $stmtAutoDone = $pdo->prepare("
         SELECT d.id AS donation_id, d.need_id
         FROM donations d
         JOIN needs n ON d.need_id = n.id
         WHERE n.status = 'menunggu_pengambilan'
           AND d.status = 'proof_uploaded'
-          AND d.proof_uploaded_at < DATE_SUB(NOW(), INTERVAL 72 HOUR)
+          AND d.proof_uploaded_at < DATE_SUB(NOW(), INTERVAL :hours HOUR)
           AND NOT EXISTS (SELECT 1 FROM disputes disp WHERE disp.need_id = n.id AND disp.status IN ('open', 'under_review'))
     ");
+    $stmtAutoDone->bindValue(':hours', $autoConfirmHours, PDO::PARAM_INT);
     $stmtAutoDone->execute();
     $autoCompletes = $stmtAutoDone->fetchAll();
 

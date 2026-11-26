@@ -70,6 +70,16 @@ class AdminController {
             exit;
         }
 
+        // Proteksi: laporan yang sudah selesai (resolved/rejected) tidak dapat diubah kembali
+        $pdo = get_db_connection();
+        $checkStmt = $pdo->prepare("SELECT status FROM disputes WHERE id = :id LIMIT 1");
+        $checkStmt->execute([':id' => $dispute_id]);
+        $existingDispute = $checkStmt->fetch();
+        if (!$existingDispute || in_array($existingDispute['status'], ['resolved', 'rejected'], true)) {
+            header("Location: index.php?page=admin-dashboard&error=dispute_locked");
+            exit;
+        }
+
         Need::update_dispute_status($dispute_id, $status, $notes);
 
         header("Location: index.php?page=admin-dashboard&msg=dispute_diperbarui");

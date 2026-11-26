@@ -152,9 +152,9 @@
                             <span style="font-size: 0.85rem; font-weight: 600; color: ${isDark ? '#94a3b8' : '#64748b'};">cm</span>
                         </div>
                         <div style="margin-top: 4px;">
-                            <span class="badge ${statusClass}" style="font-size: 0.72rem; padding: 4px 12px; font-weight: 700; border-radius: 9999px;">
+                            <div class="${val <= 0 ? '' : (isKek ? 'status-kek-text' : 'status-normal-text')}" style="font-size: 0.82rem; font-weight: 700;">
                                 ${statusText}
-                            </span>
+                            </div>
                         </div>
                         <div style="font-size: 0.72rem; color: ${isDark ? '#94a3b8' : '#64748b'}; margin-top: 6px;">
                             Standar Kemenkes RI: Ambang batas normal minimal <strong>23,5 cm</strong>
@@ -373,12 +373,6 @@
 
             container.innerHTML = `
                 <div class="medical-radar-card ${isDark ? 'dark-mode' : ''}" style="position: relative; text-align: center; max-width: ${size + 40}px; margin: 0 auto; overflow: visible;">
-                    <div style="margin-bottom: 8px;">
-                        <span class="badge badge-info" style="font-size: 0.72rem; padding: 4px 12px; font-weight: 700; border-radius: 9999px;">
-                            Indeks 5 Sumbu Nutrisi Pangan Bumil
-                        </span>
-                    </div>
-
                     <svg viewBox="-70 -15 500 395" class="medical-radar-svg" style="width: 100%; height: auto; max-width: 100%; overflow: visible;" role="img" aria-label="Diagram Radar Nutrisi 5 Sumbu">
                         <defs>
                             <filter id="${uid}_drop" x="-20%" y="-20%" width="140%" height="140%">

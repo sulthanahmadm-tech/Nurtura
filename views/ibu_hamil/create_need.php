@@ -114,9 +114,37 @@ require_once __DIR__ . '/../../app/helpers/auth_helper.php';
 
                 <div class="form-group">
                     <label for="lila_measurement">Lingkar Lengan Atas (LILA) Terakhir (cm)</label>
-                    <input type="number" step="0.1" min="10" max="60" id="lila_measurement" name="lila_measurement" class="form-control" value="<?= htmlspecialchars($profile['lila_cm'] ?? '') ?>" placeholder="Contoh: 21.5" required>
+                    <input type="number" step="0.1" min="10" max="60" id="lila_measurement" name="lila_measurement" class="form-control" value="<?= htmlspecialchars($profile['lila_cm'] ?? '') ?>" placeholder="Contoh: 21.5" required oninput="updateLiveLilaIndicator(this.value)">
+                    <div id="lila-live-indicator" style="margin-top: 8px; font-size: 0.84rem; font-weight: 700; display: none; padding: 10px 14px; border-radius: 10px;"></div>
                     <small class="field-help">Masukkan hasil pengukuran terakhir dalam sentimeter. Standar Kemenkes RI: Nilai di bawah 23,5 cm merupakan indikator risiko Kurang Energi Kronis (KEK).</small>
                 </div>
+                <script>
+                function updateLiveLilaIndicator(val) {
+                    const el = document.getElementById('lila-live-indicator');
+                    if (!el) return;
+                    const num = parseFloat(val);
+                    if (isNaN(num) || num <= 0) {
+                        el.style.display = 'none';
+                        return;
+                    }
+                    el.style.display = 'block';
+                    if (num < 23.5) {
+                        el.style.background = '#fef2f2';
+                        el.style.borderLeft = '3px solid #b91c1c';
+                        el.style.color = '#991b1b';
+                        el.textContent = 'Indikasi Risiko KEK (LILA ' + num.toFixed(1) + ' cm < 23,5 cm) — Memenuhi prioritas intervensi pangan bergizi.';
+                    } else {
+                        el.style.background = '#f0fdf4';
+                        el.style.borderLeft = '3px solid #15803d';
+                        el.style.color = '#166534';
+                        el.textContent = 'Status LILA Normal (' + num.toFixed(1) + ' cm ≥ 23,5 cm) — Tetap jaga asupan protein hewani dan Tablet Tambah Darah.';
+                    }
+                }
+                document.addEventListener('DOMContentLoaded', function () {
+                    const input = document.getElementById('lila_measurement');
+                    if (input && input.value) updateLiveLilaIndicator(input.value);
+                });
+                </script>
 
                 <div class="form-group" style="margin-bottom:0">
                     <label for="drop_point_id">Titik Posyandu Mitra Serah Terima Paket</label>

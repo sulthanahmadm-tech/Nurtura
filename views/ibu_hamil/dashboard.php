@@ -27,13 +27,8 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
     <!-- 1. Header Bar Dasbor -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span class="badge badge-info">NurturaCare · Panel Ibu Hamil</span>
-                <?php if ($usia_minggu > 0): ?>
-                    <span class="badge badge-secondary" style="font-weight: 700;">
-                        Trimester <?= $usia_minggu <= 13 ? '1' : ($usia_minggu <= 27 ? '2' : '3') ?>
-                    </span>
-                <?php endif; ?>
+            <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #0284c7; margin-bottom: 6px;">
+                NurturaCare · Panel Ibu Hamil <?= $usia_minggu > 0 ? '· Trimester ' . ($usia_minggu <= 13 ? '1' : ($usia_minggu <= 27 ? '2' : '3')) : '' ?>
             </div>
             <h1 style="font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; letter-spacing: -0.02em;">
                 Halo, <?= htmlspecialchars($nama_ibu) ?>!
@@ -126,9 +121,9 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
                     <div style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-top: 2px;">
                         <?= htmlspecialchars($lila_tampil) ?> <span style="font-size: 0.8rem; font-weight: 500; color: #64748b;">cm</span>
                     </div>
-                    <span class="badge <?= $badge_lila ?>" style="font-size: 0.68rem; margin-top: 4px;">
+                    <div class="<?= $is_kek ? 'status-kek-text' : 'status-normal-text' ?>" style="font-size: 0.76rem; margin-top: 4px;">
                         <?= $status_lila ?>
-                    </span>
+                    </div>
                 </div>
 
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px;">
@@ -241,9 +236,12 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
                     <div class="card-3d-tactile" style="padding: 24px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                             <div>
-                                <span style="font-size: 0.72rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">
-                                    ID: #NTR-<?= str_pad($n['id'], 4, '0', STR_PAD_LEFT) ?>
-                                </span>
+                                <button type="button"
+                                        onclick="copyNeedCode('#NTR-<?= str_pad($n['id'], 4, '0', STR_PAD_LEFT) ?>')"
+                                        title="Salin kode pengajuan"
+                                        style="background: none; border: none; padding: 0; font-size: 0.72rem; font-weight: 700; color: #0284c7; text-transform: uppercase; cursor: pointer;">
+                                    ID: #NTR-<?= str_pad($n['id'], 4, '0', STR_PAD_LEFT) ?> · Salin
+                                </button>
                                 <h3 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 2px 0 4px 0;">
                                     <?= htmlspecialchars($n['title']) ?>
                                 </h3>
@@ -310,7 +308,7 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
                                     <form action="index.php?action=confirm-received" method="POST" style="margin: 0;">
                                         <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                                         <input type="hidden" name="need_id" value="<?= (int)$n['id'] ?>">
-                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda sudah menerima paket pangan ini di Posyandu dan memastikan kondisinya baik?')">
+                                        <button type="submit" class="btn btn-success btn-sm" data-confirm="Apakah Anda sudah menerima paket pangan ini di Posyandu dan memastikan kondisinya baik?">
                                             ✓ Konfirmasi Terima Paket
                                         </button>
                                     </form>
@@ -344,21 +342,6 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
                                     </form>
                                 </div>
 
-                                <!-- Modal Foto Bukti Drop Bantuan -->
-                                <div id="proof-modal-<?= (int)$n['id'] ?>" class="proof-modal" onclick="closeProofModal(<?= (int)$n['id'] ?>)">
-                                    <div class="proof-modal-content" onclick="event.stopPropagation()">
-                                        <div class="proof-modal-header">
-                                            <h3>Foto Bukti Serah Terima dari Donatur</h3>
-                                            <button type="button" class="proof-close" onclick="closeProofModal(<?= (int)$n['id'] ?>)">&times;</button>
-                                        </div>
-                                        <div class="proof-modal-body">
-                                            <img id="proof-image-<?= (int)$n['id'] ?>" src="" alt="Foto Bukti Drop-Point Posyandu" style="display: none;">
-                                            <p id="proof-loading-<?= (int)$n['id'] ?>" style="font-size: 0.85rem; color: #64748b; padding: 20px 0;">
-                                                Memuat foto bukti bantuan...
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -367,5 +350,35 @@ $needs_list     = is_array($needs ?? null) ? $needs : [];
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Modal Foto Bukti Drop Bantuan (Root Level: Anti Jedag-Jedug Hover Card) -->
+<div id="proof-modal-global" class="proof-modal" onclick="closeProofModal('global')">
+    <div class="proof-modal-content" onclick="event.stopPropagation()">
+        <div class="proof-modal-header">
+            <h3>Foto Bukti Serah Terima dari Donatur</h3>
+            <button type="button" class="proof-close" onclick="closeProofModal('global')">&times;</button>
+        </div>
+        <div class="proof-modal-body">
+            <img id="proof-image-global" src="" alt="Foto Bukti Drop-Point Posyandu" style="display: none;">
+            <p id="proof-loading-global" style="font-size: 0.85rem; color: #64748b; padding: 20px 0;">
+                Memuat foto bukti bantuan...
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyNeedCode(code) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            if (typeof window.showNurturaToast === 'function') {
+                window.showNurturaToast('Kode pengajuan ' + code + ' berhasil disalin.');
+            }
+        });
+    } else if (typeof window.showNurturaToast === 'function') {
+        window.showNurturaToast('Kode pengajuan: ' + code);
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

@@ -53,7 +53,7 @@ class Need {
     public static function find_by_id($id) {
         $pdo = get_db_connection();
         $stmt = $pdo->prepare("
-            SELECT n.*, p.full_name, p.district, p.regency_city, p.gestational_age_weeks, p.estimated_birth_date,
+            SELECT n.*, p.district, p.regency_city, p.gestational_age_weeks, p.estimated_birth_date,
                    dp.name AS drop_point_name, dp.officer_in_charge, dp.phone_contact AS drop_point_phone, dp.address_full AS drop_point_address
             FROM needs n
             JOIN profiles p ON n.user_id = p.user_id
@@ -165,7 +165,8 @@ class Need {
                 $stmt = $pdo->prepare("
                     UPDATE needs
                     SET status = 'menunggu_pengambilan'
-                    WHERE id = (
+                    WHERE status = 'dispute'
+                      AND id = (
                         SELECT need_id
                         FROM disputes
                         WHERE id = :dispute_id

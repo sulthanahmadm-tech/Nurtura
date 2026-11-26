@@ -21,18 +21,18 @@ $is_kek = $has_lila && ($lila_val < 23.5);
     </div>
 
     <div class="card-modern" style="padding: 36px; border: 1px solid rgba(226, 232, 240, 0.9);">
-        <!-- Top Status Bar & Badges -->
+        <!-- Top Status Bar & Metadata (Clean Unslop) -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <?= render_status_badge($need['status']) ?>
-                <span class="badge badge-info">Validasi Medis Buku KIA Terverifikasi</span>
+                <span style="font-size: 0.8rem; font-weight: 600; color: #0284c7;">Validasi Medis Buku KIA</span>
             </div>
             <?php if ($has_lila): ?>
-                <span class="badge <?= $is_kek ? 'badge-kek-risk' : 'badge-kek-normal' ?>" style="font-size: 0.82rem; padding: 6px 14px; font-weight: 700;">
-                    <?= $is_kek ? 'Indikasi KEK: LILA ' . number_format($lila_val, 1) . ' cm (< 23,5 cm)' : 'LILA Normal: ' . number_format($lila_val, 1) . ' cm' ?>
+                <span class="<?= $is_kek ? 'status-kek-text' : 'status-normal-text' ?>" style="font-size: 0.85rem;">
+                    <?= $is_kek ? 'Indikasi KEK: LILA ' . number_format($lila_val, 1) . ' cm (&lt; 23,5 cm)' : 'LILA Normal: ' . number_format($lila_val, 1) . ' cm' ?>
                 </span>
             <?php else: ?>
-                <span class="badge badge-secondary" style="font-size: 0.82rem; padding: 6px 14px; font-weight: 700;">
+                <span style="font-size: 0.82rem; font-weight: 600; color: #64748b;">
                     LILA: Belum Tercatat
                 </span>
             <?php endif; ?>
@@ -56,7 +56,7 @@ $is_kek = $has_lila && ($lila_val < 23.5);
                         Visualisasi Klinis Status Gizi & Paket Pangan
                     </h2>
                 </div>
-                <span class="badge badge-secondary" style="font-size: 0.75rem;">Standar Kemenkes RI</span>
+                <span style="font-size: 0.74rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Standar Kemenkes RI</span>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
@@ -200,5 +200,43 @@ $is_kek = $has_lila && ($lila_val < 23.5);
         <?php endif; ?>
     </div>
 </div>
+
+<?php if ($need['status'] === 'dipublikasikan'): ?>
+    <!-- Sticky Mini Summary Bar saat Scroll (UX Rekomendasi #1) -->
+    <div id="sticky-need-bar" class="sticky-need-bar">
+        <div style="min-width: 0;">
+            <div style="font-size: 0.72rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">
+                Drop-Point: <?= htmlspecialchars($need['drop_point_name']) ?>
+            </div>
+            <div style="font-size: 0.96rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <?= htmlspecialchars($need['title']) ?>
+            </div>
+        </div>
+        <div style="flex-shrink: 0;">
+            <?php if (is_logged_in() && is_donatur()): ?>
+                <button type="button" onclick="document.querySelector('form[action*=commit-donation] button[type=submit]')?.click()" class="btn-lime" style="padding: 10px 22px; font-size: 0.9rem;">
+                    Kunci Komitmen 48 Jam →
+                </button>
+            <?php elseif (!is_logged_in()): ?>
+                <a href="index.php?page=login" class="btn-lime" style="padding: 10px 22px; font-size: 0.9rem;">
+                    Masuk untuk Membantu →
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bar = document.getElementById('sticky-need-bar');
+        if (!bar) return;
+        window.addEventListener('scroll', function () {
+            if ((window.scrollY || window.pageYOffset) > 320) {
+                bar.classList.add('is-visible');
+            } else {
+                bar.classList.remove('is-visible');
+            }
+        }, { passive: true });
+    });
+    </script>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

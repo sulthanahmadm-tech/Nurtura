@@ -51,8 +51,8 @@ class NeedController {
             $drop_point_id = (int)($_POST['drop_point_id'] ?? 0);
             $lila = (float)($_POST['lila_measurement'] ?? 0);
 
-            if (empty($title) || empty($description) || empty($food_items) || $drop_point_id <= 0 || $lila <= 0) {
-                $error = "Semua kolom wajib diisi!";
+            if (empty($title) || empty($description) || empty($food_items) || $drop_point_id <= 0 || $lila < 10 || $lila > 60) {
+                $error = "Semua kolom wajib diisi dengan ukuran LILA yang valid (10–60 cm)!";
                 require_once __DIR__ . '/../../views/ibu_hamil/create_need.php';
                 return;
             }
